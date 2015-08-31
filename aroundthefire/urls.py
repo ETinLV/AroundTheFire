@@ -16,10 +16,23 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 from django.views.generic import TemplateView
-from main.views import MyView
+import main
+from main.views import TripCreate, UserHome, TripDetail, LocationDetail, \
+    LocationCreate
+from django.contrib.auth import views as auth_views
+
 
 urlpatterns = [
+    url(r'^login', auth_views.login, {'template_name': 'user/login.html', 'extra_context': {'next': '/'}}, name='login'),
+    url(r'^trip/create', TripCreate.as_view(), name="trip_create"),
+    url(r'^trip/(?P<pk>[0-9]+)/$', TripDetail.as_view(), name="trip_detail"),
+    url(r'^location/(?P<pk>[0-9]+)/$', LocationDetail.as_view(), name="location_detail"),
+    url(r'^location/new/$', LocationCreate.as_view(), name="location_create"),
+    url(r'^user/register', main.views.create_camper),
     url(r'^admin/', include(admin.site.urls)),
-    # url(r'^$', MyView.as_view()),
-    url(r'^$', TemplateView.as_view(template_name="home.html"))
+    # url(r'^apitest', MyView.as_view()),
+    url(r'^user/home', UserHome.as_view(), name="home"),
+    url(r'^$', TemplateView.as_view(template_name="default.html"), name='default')
 ]
+
+#TODO Clean this up.

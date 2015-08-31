@@ -25,10 +25,10 @@ function initMap() {
     var myLatLng2 = {lat: 36.365, lng: -115.064};
 
     var map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 4,
+        zoom: 6590,
         center: myLatLng
     });
-
+{#ß#}
     var infowindow = new google.maps.InfoWindow({
         content: 'check check check'
     });
@@ -46,10 +46,16 @@ function initMap() {
     });
 
     marker.addListener('click', function () {
-        infowindow.open(map, marker)
+        infowindow.open(map, marker);
+    });
+
+    map.addListener("click", function(event) {
+    var lat = event.latLng.lat();
+    var lng = event.latLng.lng();
+    // populate yor box/field with lat, lng
+    alert("Lat=" + lat + "; Lng=" + lng);
     });
 }
-
     </script>
     <script async defer
         src="https://maps.googleapis.com/maps/api/js?signed_in=true&callback=initMap"></script>
