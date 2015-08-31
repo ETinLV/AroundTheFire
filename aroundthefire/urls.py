@@ -31,8 +31,7 @@ urlpatterns = [
     url(r'^user/register', main.views.create_camper),
     url(r'^admin/', include(admin.site.urls)),
     # url(r'^apitest', MyView.as_view()),
-    url(r'^user/home', UserHome.as_view(), name="home"),
-    url(r'^$', TemplateView.as_view(template_name="default.html"), name='default')
+    url(r'^$', UserHome.as_view(), name="home"),
 ]
 
 #TODO Clean this up.

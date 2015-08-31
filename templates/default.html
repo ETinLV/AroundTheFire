@@ -15,46 +15,47 @@
         height: 100%;
       }
     </style>
+
   </head>
   <body>
+  {{ locations }}
     <div id="map"></div>
     <script>
-
+var jslocations = eval('{{ jslocations }}');
 function initMap() {
-    var myLatLng = {lat: 36.363, lng: -115.044};
+    var jslocations = eval('{{ jslocations }}');
+
     var myLatLng2 = {lat: 36.365, lng: -115.064};
-
     var map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 6590,
-        center: myLatLng
+        zoom: 8,
+        center: myLatLng2
     });
-{#ß#}
-    var infowindow = new google.maps.InfoWindow({
-        content: 'check check check'
-    });
+{#    var infowindow = new google.maps.InfoWindow({#}
+{#        content: 'check check check'#}
+{#    });#}
 
-    var marker = new google.maps.Marker({
-        position: myLatLng,
-        map: map,
-        title: 'Hello World!'
-    });
+    for (loc in jslocations) {
+        var myLatLng = {lat: Number(jslocations[loc].fields.lat), lng: Number(jslocations[loc].fields.long)};
 
-    var marker2 = new google.maps.Marker({
-        position: myLatLng2,
-        map: map,
-        title: 'Hello World2222!'
-    });
+        var marker = new google.maps.Marker({
+            position: myLatLng,
+            map: map,
+            title: 'Hello World!'
+        });
+        var infowindow = new google.maps.InfoWindow({
+            content: 'test = ' + loc
+        });
+        marker.addListener('click', function () {
+            infowindow.open(map, marker)
+        });
+    }
 
-    marker.addListener('click', function () {
-        infowindow.open(map, marker);
-    });
-
-    map.addListener("click", function(event) {
-    var lat = event.latLng.lat();
-    var lng = event.latLng.lng();
-    // populate yor box/field with lat, lng
-    alert("Lat=" + lat + "; Lng=" + lng);
-    });
+{#    map.addListener("click", function(event) {#}
+{#        var lat = event.latLng.lat();#}
+{#        var lng = event.latLng.lng();#}
+{#        // populate yor box/field with lat, lng#}
+{#        alert("Lat=" + lat + "; Lng=" + lng);#}
+{#    });#}
 }
     </script>
     <script async defer

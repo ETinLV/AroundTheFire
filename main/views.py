@@ -1,5 +1,6 @@
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
+from django.core import serializers
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 import json
@@ -7,6 +8,7 @@ from django.shortcuts import render, render_to_response
 
 # Create your views here.
 from django.utils.decorators import method_decorator
+from django.utils.safestring import mark_safe
 from django.views.generic import View, CreateView, DetailView, ListView
 import requests
 from main.apikeys import trailkey, weatherkey
@@ -14,14 +16,23 @@ from main.forms import CamperCreateForm
 from main.models import Camper, Trip, Location
 
 
-class UserHome(View):
+class Default(View):
     def get(self, request, *args, **kwargs):
         if request.user:
-            context = {'camper': self.request.user.camper}
+            context = {'locations': Location.objects.all()}
             return render_to_response(template_name='user/home.html', context=context)
         else:
            return HttpResponseRedirect(reverse('default'))
 
+class UserHome(View):
+    jslocations = serializers.serialize('json', Location.objects.all(), fields=('lat','long'))
+    def get(self, request, *args, **kwargs):
+        if self.request.user.pk is not None:
+            context = {'camper': self.request.user.camper, 'locations': Location.objects.all(), 'jslocations': mark_safe(self.jslocations)}
+            return render_to_response(template_name='user/home.html', context=context)
+        else:
+            context = {'locations': Location.objects.all(), 'jslocations': mark_safe(self.jslocations)}
+            return render_to_response(template_name='default.html', context=context)
 
 def create_camper(request):
     """Camper Registration view to register.html"""
