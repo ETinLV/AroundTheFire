@@ -21,7 +21,7 @@
   {{ locations }}
     <div id="map"></div>
     <script>
-var jslocations = eval('{{ jslocations }}');
+var jslocations = eval('{"model": "main.location", "pk": 1, "fields": {"long": "-114.9251745", "lat": "36.0492741"}}, {"model": "main.location", "pk": 2, "fields": {"long": "-115.638731", "lat": "36.266718"}}');
 function initMap() {
     var jslocations = eval('{{ jslocations }}');
 
@@ -42,6 +42,8 @@ function initMap() {
             map: map,
             title: 'Hello World!'
         });
+        marker.setMap(map);
+
         var infowindow = new google.maps.InfoWindow({
             content: 'test = ' + loc
         });
@@ -50,7 +52,7 @@ function initMap() {
         });
     }
 
-    
+
 {#    map.addListener("click", function(event) {#}
 {#        var lat = event.latLng.lat();#}
 {#        var lng = event.latLng.lng();#}
