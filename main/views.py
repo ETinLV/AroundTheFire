@@ -11,9 +11,9 @@ from django.utils.decorators import method_decorator
 from django.utils.safestring import mark_safe
 from django.views.generic import View, CreateView, DetailView, ListView
 import requests
-from main.apikeys import trailkey, weatherkey
+from main.apikeys import googlekey
 from main.forms import CamperCreateForm
-from main.models import Camper, Trip, Location
+from main.models import Camper, Trip, Location, Address
 
 
 class Default(View):
@@ -26,7 +26,7 @@ class Default(View):
 
 class UserHome(View):
     jslocations = serializers.serialize('json', Location.objects.all(), fields=('lat','long'))
-    def get(self, request, *args, **kwargs):
+    def get(self, request, *arg):
         if self.request.user.pk is not None:
             context = {'camper': self.request.user.camper, 'locations': Location.objects.all(), 'jslocations': mark_safe(self.jslocations)}
             return render_to_response(template_name='user/home.html', context=context)
@@ -41,9 +41,10 @@ def create_camper(request):
         if form.is_valid():
             data = form.cleaned_data
             user = form.save()
+            address = Address.objects.create()
+            make_addres(address, zip=data['zip'])
             camper = Camper()
             camper.user = user
-            camper.zip = data['zip']
             camper.save()
             user = authenticate(username=request.POST['username'],
                                 password=request.POST['password1'])
@@ -83,7 +84,7 @@ class LocationCreate(CreateView):
     def form_valid(self, form):
         form.instance.owner = self.request.user.camper
         return super(LocationCreate, self).form_valid(form)
-
+#TODO add the adress into the location
 class TripCreate(CreateView):
     model = Trip
     fields = ('start_date', 'end_date' )
@@ -101,8 +102,17 @@ class TripCreate(CreateView):
         return super(TripCreate, self).form_valid(form)
 #TODO: when creating trip, can click map to create new site and return to trip
 
-
-
+def make_addres(address, zip=None, lat=0, lng=0):
+    response = requests.get(
+        'https://maps.googleapis.com/maps/api/geocode/json?address={zip}&components=country:US&key={googlekey}'.format(zip=zip, googlekey=googlekey))
+    data = json.loads(response.content.decode('utf-8'))
+    data = data['results'][0]
+    address.zip = zip
+    address.lat = data['geometry']['location']['lat']
+    address.lng = data['geometry']['location']['lng']
+    address.weather_place = data['address_components'][1]['short_name']
+    address.save()
+    return address
 # def call_api(location):
 #     response = requests.get(
 #         "https://trailapi-trailapi.p.mashape.com/?q[activities_activity_type_name_eq]=camping&q[city_cont]={}".format(

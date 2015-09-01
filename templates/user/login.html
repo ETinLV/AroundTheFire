@@ -4,16 +4,18 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css' %}">
     <title></title>
 </head>
 <body>
+    {% bootstrap_messages %}
     <h3>Please Login</h3>
     <form method="post" action="{% url 'login' %}">
     {% csrf_token %}
     <input type="hidden" name="next" value="{{ next }}">
     {% bootstrap_form form layout='inline'%}
-    <input type="submit" value="Login" class="btn btn-danger">
+    <input type="submit" value="Login" class="btn btn-success">
     </form>
-    <a href="{% url 'register' %}" class="btn btn-danger">Create a New Profile</a>
+    <a href="{% url 'register' %}" class="btn btn-success">Create a New Profile</a>
 </body>
 </html>

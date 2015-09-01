@@ -3,13 +3,17 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import Model
 
+class Address(models.Model):
+    zip = models.CharField(max_length=10, null=True, blank=True)
+    lat = models.CharField(max_length=30, null=True)
+    lng = models.CharField(max_length=30, null=True)
+    weather_place = models.CharField(max_length=100, null=True, blank=True)
 
 class Camper(models.Model):
     """Model for site user. aka Campers"""
     user = models.OneToOneField(User, null=True)
-    zip = models.CharField(max_length=10, null=True)
     friends = models.ManyToManyField('self')
-
+    address = models.OneToOneField(Address, null=True)
     def __str__(self):
         return '{}'.format(self.user.username)
 
@@ -31,9 +35,7 @@ class Trip(models.Model):
 class Location(models.Model):
     """Model for campsites"""
     name = models.CharField(max_length=200, null=True)
-    lat = models.CharField(max_length=30, null=True)
-    long = models.CharField(max_length=30, null=True)
-    weather_place = models.CharField(max_length=100, null=True, blank=True)
+    address = models.OneToOneField(Address, null=True)
 
     def __str__(self):
         return '{}'.format(self.name)

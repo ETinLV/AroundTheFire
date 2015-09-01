@@ -12,7 +12,7 @@ class CamperCreateForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ('username', 'zip', 'email')
+        fields = ('username', 'email')
 
 class TripCreateForm(ModelForm):
     model = Trip
