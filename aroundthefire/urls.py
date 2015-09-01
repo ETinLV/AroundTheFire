@@ -28,7 +28,7 @@ urlpatterns = [
     url(r'^trip/(?P<pk>[0-9]+)/$', TripDetail.as_view(), name="trip_detail"),
     url(r'^location/(?P<pk>[0-9]+)/$', LocationDetail.as_view(), name="location_detail"),
     url(r'^location/new/$', LocationCreate.as_view(), name="location_create"),
-    url(r'^user/register', main.views.create_camper),
+    url(r'^user/register', main.views.create_camper, name='register'),
     url(r'^admin/', include(admin.site.urls)),
     # url(r'^apitest', MyView.as_view()),
     url(r'^$', UserHome.as_view(), name="home"),

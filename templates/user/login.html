@@ -1,3 +1,5 @@
+{% load staticfiles %}
+{% load bootstrap3 %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,11 +10,10 @@
     <h3>Please Login</h3>
     <form method="post" action="{% url 'login' %}">
     {% csrf_token %}
-        {% for field in form %}
-            <p>{{ field.label }}{{ field }}</p>
-        {% endfor %}
     <input type="hidden" name="next" value="{{ next }}">
+    {% bootstrap_form form layout='inline'%}
     <input type="submit" value="Login" class="btn btn-danger">
     </form>
+    <a href="{% url 'register' %}" class="btn btn-danger">Create a New Profile</a>
 </body>
 </html>
