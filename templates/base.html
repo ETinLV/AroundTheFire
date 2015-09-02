@@ -246,7 +246,6 @@
     <script>
         var map = null;
         var marker = null;
-
         function initMap() {
             var jslocations = JSON.parse('{{ jslocations }}');
             var defautLat = Number({% block lat %}{% endblock %});
@@ -304,7 +303,8 @@
                     //TODO make icons related to site information
                 });
                 var infowindow = new google.maps.InfoWindow({
-                    content: 'test string'
+                    content: (jslocations[loc].fields.name.link('location/'+jslocations[loc].pk))
+
                 });
                 google.maps.event.addListener(marker, 'click', function () {
                     infowindow.open(map, marker);

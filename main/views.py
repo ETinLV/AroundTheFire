@@ -20,7 +20,7 @@ class UserHome(View):
 
     def get(self, request, *arg):
         self.jslocations = serializers.serialize('json', Location.objects.all(),
-                                    fields=('lat', 'lng'))
+                                    fields=('lat', 'lng', 'name', 'city', 'zip', 'pk'))
         if self.request.user.pk is not None:
             context = {'camper': self.request.user.camper,
                        'locations': Location.objects.all(),

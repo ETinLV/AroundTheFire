@@ -14,4 +14,4 @@ class TripAdmin(admin.ModelAdmin):
 
 @admin.register(Location)
 class LocationAdmin(admin.ModelAdmin):
-    list_display = ('name', 'lat', 'lng', 'zip',)
+    list_display = ('name', 'lat', 'lng', 'zip','pk')

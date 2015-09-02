@@ -1,13 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title></title>
-</head>
-<body>
-{{ location }}
-{{ location.name }}
-{{ location.lat }}
-{{ location.long }}
-</body>
-</html>
+{% extends 'base.html' %}
+{% block title %}
+    Home
+{% endblock %}
+{% block lat %}{{ location.lat }}{% endblock %}
+{% block lng %}{{ location.lng }}{% endblock %}
+
+
+
+{#<!DOCTYPE html>#}
+{#<html lang="en">#}
+{#<head>#}
+{#    <meta charset="UTF-8">#}
+{#    <title></title>#}
+{#</head>#}
+{#<body>#}
+{#{{ location }}#}
+{#{{ location.name }}#}
+{#{{ location.lat }}#}
+{#{{ location.long }}#}
+{#</body>#}
+{#</html>#}
