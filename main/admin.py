@@ -1,12 +1,12 @@
 from django.contrib import admin
 
 # Register your models here.
-from main.models import Trip, Location, Camper, Address
+from main.models import Trip, Location, Camper
 
 
 @admin.register(Camper)
 class CamperAdmin(admin.ModelAdmin):
-    list_display = ('user',)
+    list_display = ('user', 'zip')
 
 @admin.register(Trip)
 class TripAdmin(admin.ModelAdmin):
@@ -14,8 +14,4 @@ class TripAdmin(admin.ModelAdmin):
 
 @admin.register(Location)
 class LocationAdmin(admin.ModelAdmin):
-    list_display = ('name',)
-
-@admin.register(Address)
-class LocationAdmin(admin.ModelAdmin):
-    list_display = ('lat', 'lng', 'weather_place', 'zip')
+    list_display = ('name', 'lat', 'lng', 'zip',)

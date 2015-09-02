@@ -1,2 +1,6 @@
-{% extends "base.html" %}
-{% load bootstrap3 %}
+{% extends 'base.html' %}
+{% block title %}
+    Home
+{% endblock %}
+{% block lat %}{{ camper.lat }}{% endblock %}
+{% block lng %}{{ camper.lng }}{% endblock %}
