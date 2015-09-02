@@ -258,10 +258,6 @@
             });
 
             for (loc in jslocations) {
-                var myLatLng = {
-                    lat: Number(jslocations[loc].fields.lat),
-                    lng: Number(jslocations[loc].fields.long)
-                };
                 placeMarker(loc);
 
             }
@@ -302,7 +298,7 @@
                     map: map,
                     position: {
                         lat: Number(jslocations[loc].fields.lat),
-                        lng: Number(jslocations[loc].fields.long)
+                        lng: Number(jslocations[loc].fields.lng)
                     },
                     //icon: '/static/images/iconsets/gmap/iconb' + (loc+1) + '.png',
                     //TODO make icons related to site information
