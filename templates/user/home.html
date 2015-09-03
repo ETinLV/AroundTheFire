@@ -4,3 +4,53 @@
 {% endblock %}
 {% block lat %}{{ camper.lat }}{% endblock %}
 {% block lng %}{{ camper.lng }}{% endblock %}
+
+{% block pane-one-title %}
+    Upcoming Trips
+{% endblock %}
+{% block pane-one %}
+    <h4>Invited To</h4>
+    {% if camper.invited_trips  %}
+        {% for trip in camper.invited_trips %}
+            <p>{{ trip.location.name }}</p>
+            <p>{{ trip.start_date }}<p>
+            <p>{{ trip.end_date }}</p>
+            {% endfor %}
+            {% else%}
+                <p>You Currently Aren't invited On Any Trips</p>
+        {% endif %}
+    <h4>Upcoming:</h4>
+    {% if camper.upcoming.trips  %}
+        {% for trip in camper.upcoming_trips %}
+            <p>{{ trip.location.name }}</p>
+            <p>{{ trip.start_date }}<p>
+            <p>{{ trip.end_date }}</p>
+            {% endfor %}
+            {% else%}
+                <p>You Have No Upcoming Trips!</p>
+        {% endif %}
+{% endblock %}
+
+{% block pane-two-title %}
+    Past Trips
+{% endblock %}
+
+{% block pane-two %}
+        {% if camper.past_trips  %}
+        {% for trip in camper.past_trips %}
+            <p>{{ trip.location.name }}</p>
+            <p>{{ trip.start_date }}<p>
+            <p>{{ trip.end_date }}</p>
+            {% endfor %}
+            {% else%}
+                <p>You Haven't Been On Any Trips Yet!</p>
+        {% endif %}
+{% endblock %}
+
+{% block pane-three-title %}
+    Weather - Home Locations
+{% endblock %}
+
+{% block pane-three %}
+    <iframe id="forecast_embed" type="text/html" frameborder="0" height="245" width="100%" src="http://forecast.io/embed/#lat={{ camper.lat }}&lon={{ camper.lng }}&name={{ camper.city }}"> </iframe>
+{% endblock %}

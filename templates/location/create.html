@@ -1,10 +1,37 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title></title>
-</head>
-<body>
-{{ form }}
-</body>
-</html>
+{% extends 'base.html' %}
+{% load bootstrap3 %}
+{% block title %}
+    Create a Campsite
+{% endblock %}
+{% block lat %}{{ view.kwargs.lat }}{% endblock %}
+{% block lng %}{{ view.kwargs.lng }}{% endblock %}
+
+{% block pane-one-title %}
+    Upcoming Trips
+{% endblock %}
+{% block pane-one %}
+    <h4>Campsite Details</h4>
+    <form method="post" action="{% url 'location_create' %}">
+    {% csrf_token %}
+    {% bootstrap_form form layout='inline'%}
+    <input type="submit" value="Create A Campsite" class="btn btn-success">
+    <input type="hidden" name="lat" value="{{ view.kwargs.lat }}">
+    <input type="hidden" name="lng" value="{{ view.kwargs.lng }}">
+    </form>
+{% endblock %}
+
+{% block pane-two-title %}
+    This Shouldn't be here...
+{% endblock %}
+
+{% block pane-two %}
+Nothing at all
+{% endblock %}
+
+{% block pane-three-title %}
+    Weather - Home Locations
+{% endblock %}
+
+{% block pane-three %}
+    <iframe id="forecast_embed" type="text/html" frameborder="0" height="245" width="100%" src="http://forecast.io/embed/#lat={{ view.kwargs.lat }}&lon={{ view.kwargs.lng }}"> </iframe>
+{% endblock %}

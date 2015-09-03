@@ -1,16 +1,32 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title></title>
-</head>
-<body>
-    <form action="" method = 'POST'>
-        {% csrf_token %}
-        {% for field in form %}
-            <p>{{ field.label }}{{ field }}</p>
-        {% endfor %}
-        <input type = 'submit' value="Register" class="btn btn-danger"/>
-    </form>
-</body>
-</html>
+{% extends 'base.html' %}
+{% block title %}
+    location.name
+{% endblock %}
+{#TODOL find the proper lat.lng#}
+{% block lat %}{{ location.lat }}{% endblock %}
+{% block lng %}{{ location.lng }}{% endblock %}
+
+{% block pane-one-title %}
+    
+{% endblock %}
+
+{% block pane-one %}
+    <h4></h4>
+    
+{% endblock %}
+
+{% block pane-two-title %}
+    
+{% endblock %}
+
+{% block pane-two %}
+
+{% endblock %}
+
+{% block pane-three-title %}
+
+{% endblock %}
+
+{% block pane-three %}
+    <iframe id="forecast_embed" type="text/html" frameborder="0" height="245" width="100%" src="http://forecast.io/embed/#lat={{ view.kwargs.lat }}&lon={{ view.kwargs.lng }}"> </iframe>
+{% endblock %}

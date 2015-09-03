@@ -1,22 +1,48 @@
 {% extends 'base.html' %}
 {% block title %}
-    Home
+    {{ location.name }}
 {% endblock %}
+
 {% block lat %}{{ location.lat }}{% endblock %}
 {% block lng %}{{ location.lng }}{% endblock %}
 
+{% block pane-one-title %}
+    {{ location.name }}
+{% endblock %}
 
+{% block pane-one %}
+    {{ location.city }}
+    {{ location.lat }}
+    {{ location.lng }}
 
-{#<!DOCTYPE html>#}
-{#<html lang="en">#}
-{#<head>#}
-{#    <meta charset="UTF-8">#}
-{#    <title></title>#}
-{#</head>#}
-{#<body>#}
-{#{{ location }}#}
-{#{{ location.name }}#}
-{#{{ location.lat }}#}
-{#{{ location.long }}#}
-{#</body>#}
-{#</html>#}
+{% endblock %}
+
+{% block pane-two-title %}
+    Reviews
+{% endblock %}
+
+{% block pane-two %}
+    Average Rating =
+    <h5>Other Person:<h5>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam
+    sollicitudin sem id sapien convallis consequat at eget metus. Nullam
+    convallis tortor interdum ipsum euismod vestibulum ultrices sit amet neque.
+    In et sapien nibh. Pellentesque non lobortis dolor. Donec scelerisque,
+    libero eu maximus vestibulum, neque nunc sagittis velit, ut elementum est
+    massa non ante. Maecenas vitae facilisis justo, elementum facilisis purus.
+    Sed sem lectus, ultricies dapibus nisi eget, auctor sodales enim. Maecenas
+    vitae nunc lacus. Vestibulum turpis massa, sollicitudin ut nisi et,
+    facilisis consequat diam. Morbi lacinia ligula vitae ipsum varius, sit amet
+    bibendum sem vehicula. Etiam vehicula libero ipsum, ac rhoncus nulla luctus
+    a.</p>
+{% endblock %}
+
+{% block pane-three-title %}
+
+{% endblock %}
+
+{% block pane-three %}
+    <iframe id="forecast_embed" type="text/html" frameborder="0" height="245"
+            width="100%"
+            src="http://forecast.io/embed/#lat={{ location.lat }}&lon={{ location.lng }}&name={{ location.name }}"></iframe>
+{% endblock %}

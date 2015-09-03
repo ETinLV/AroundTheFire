@@ -17,7 +17,17 @@ class Camper(models.Model):
     city = models.CharField(max_length=100, null=True, blank=True)
     def __str__(self):
         return '{}'.format(self.user.username)
+    @property
+    def past_trips(self):
+        pass
 
+    @property
+    def upcoming_trips(self):
+        pass
+
+    @property
+    def invited_trips(self):
+        pass
 
 class Trip(models.Model):
     """Model for trips created by campers"""

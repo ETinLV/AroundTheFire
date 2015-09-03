@@ -18,3 +18,5 @@ class TripCreateForm(ModelForm):
     model = Trip
     fields = ('date')
 
+
+
