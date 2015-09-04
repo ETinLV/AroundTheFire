@@ -1,7 +1,9 @@
 {% extends 'base.html' %}
+{% load bootstrap3 %}
 {% block title %}
     Home
 {% endblock %}
+{% block zoomlevel %}10{% endblock %}
 {% block lat %}{{ camper.lat }}{% endblock %}
 {% block lng %}{{ camper.lng }}{% endblock %}
 
@@ -20,9 +22,9 @@
                 <p>You Currently Aren't invited On Any Trips</p>
         {% endif %}
     <h4>Upcoming:</h4>
-    {% if camper.upcoming.trips  %}
+    {% if camper.upcoming_trips  %}
         {% for trip in camper.upcoming_trips %}
-            <p>{{ trip.location.name }}</p>
+            <p>{{ trip.location.name }} <--this should be a link</p>
             <p>{{ trip.start_date }}<p>
             <p>{{ trip.end_date }}</p>
             {% endfor %}

@@ -7,6 +7,7 @@ from django.db.models import Model
 difficulty serializing data in  OneToOne key objects, so that attempting to pass
 a location lat and long in the JS on the template would not work."""
 
+
 class Camper(models.Model):
     """Model for site user. aka Campers"""
     user = models.OneToOneField(User, null=True)
@@ -15,31 +16,35 @@ class Camper(models.Model):
     lat = models.CharField(max_length=30, null=True)
     lng = models.CharField(max_length=30, null=True)
     city = models.CharField(max_length=100, null=True, blank=True)
+
     def __str__(self):
         return '{}'.format(self.user.username)
+
     @property
     def past_trips(self):
-        pass
+        return self.campers.filter(end_date__lte=datetime.datetime.now())
 
     @property
     def upcoming_trips(self):
-        pass
+        return self.campers.filter(end_date__gt=datetime.datetime.now())
 
     @property
     def invited_trips(self):
         pass
 
+
 class Trip(models.Model):
     """Model for trips created by campers"""
-    owner = models.OneToOneField(Camper, related_name="owner", null=True)
-    attending = models.ManyToManyField(Camper, related_name='attending',)
+    owner = models.ForeignKey(Camper, related_name="campers", null=True)
+    attending = models.ManyToManyField(Camper, related_name='attending', )
     start_date = models.DateField(blank=False, null=True)
     end_date = models.DateField(blank=False, null=True)
-    location = models.OneToOneField('Location', related_name='location',
-                                    null=True)
+    location = models.ForeignKey('Location', related_name='location',
+                                 null=True)
 
     def __str__(self):
-        return '{}. {}, {}'.format(self.owner.user.username, self.location, self.start_date)
+        return '{}. {}, {}'.format(self.owner.user.username, self.location,
+                                   self.start_date)
 
 
 class Location(models.Model):
@@ -49,5 +54,6 @@ class Location(models.Model):
     lat = models.CharField(max_length=30, null=True)
     lng = models.CharField(max_length=30, null=True)
     city = models.CharField(max_length=100, null=True, blank=True)
+
     def __str__(self):
         return '{}'.format(self.name)

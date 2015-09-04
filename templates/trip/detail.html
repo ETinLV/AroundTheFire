@@ -1,8 +1,10 @@
 {% extends 'base.html' %}
+{% load bootstrap3 %}
 {% block title %}
     location.name
 {% endblock %}
 {#TODOL find the proper lat.lng#}
+{% block zoomlevel %}10{% endblock %}
 {% block lat %}{{ location.lat }}{% endblock %}
 {% block lng %}{{ location.lng }}{% endblock %}
 

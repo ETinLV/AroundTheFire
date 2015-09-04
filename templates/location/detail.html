@@ -1,8 +1,9 @@
 {% extends 'base.html' %}
+{% load bootstrap3 %}
 {% block title %}
     {{ location.name }}
 {% endblock %}
-
+{% block zoomlevel %}12{% endblock %}
 {% block lat %}{{ location.lat }}{% endblock %}
 {% block lng %}{{ location.lng }}{% endblock %}
 
@@ -11,9 +12,10 @@
 {% endblock %}
 
 {% block pane-one %}
-    {{ location.city }}
-    {{ location.lat }}
-    {{ location.lng }}
+    <p>{{ location.city }}</p>
+    <p>{{ location.lat }}</p>
+    <p>{{ location.lng }}</p>
+    <p><a href="{% url 'trip_create' location.id %}" class="btn btn-success">Create A Trip Here</a>
 
 {% endblock %}
 
@@ -23,7 +25,25 @@
 
 {% block pane-two %}
     Average Rating =
-    <h5>Other Person:<h5>
+
+    <p>This would be nicer if it was just some details, and then a modal popped up
+    for detail review information</p>
+
+    <h5>Other Person:</h5>
+    <p>This would be nicer if it was just some details, and then a modal popped up
+    for detail review information</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam
+    sollicitudin sem id sapien convallis consequat at eget metus. Nullam
+    convallis tortor interdum ipsum euismod vestibulum ultrices sit amet neque.
+    In et sapien nibh. Pellentesque non lobortis dolor. Donec scelerisque,
+    libero eu maximus vestibulum, neque nunc sagittis velit, ut elementum est
+    massa non ante. Maecenas vitae facilisis justo, elementum facilisis purus.
+    Sed sem lectus, ultricies dapibus nisi eget, auctor sodales enim. Maecenas
+    vitae nunc lacus. Vestibulum turpis massa, sollicitudin ut nisi et,
+    facilisis consequat diam. Morbi lacinia ligula vitae ipsum varius, sit amet
+    bibendum sem vehicula. Etiam vehicula libero ipsum, ac rhoncus nulla luctus
+    a.</p>
+    <h5>Other Person:</h5>
     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam
     sollicitudin sem id sapien convallis consequat at eget metus. Nullam
     convallis tortor interdum ipsum euismod vestibulum ultrices sit amet neque.

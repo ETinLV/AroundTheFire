@@ -100,12 +100,18 @@ class TripCreate(CreateView):
     def dispatch(self, *args, **kwargs):
         return super(TripCreate, self).dispatch(*args, **kwargs)
 
+    def get_context_data(self, **kwargs):
+        context = super(TripCreate, self).get_context_data(**kwargs)
+        context['location'] =Location.objects.get(pk=self.kwargs['pk'])
+        return context
+
     def get_success_url(self):
         return reverse('home')
 
     def form_valid(self, form):
         """Make the owner of the trip the user who created it"""
         form.instance.owner = self.request.user.camper
+        form.instance.location = Location.objects.get(pk=self.kwargs['pk'])
         return super(TripCreate, self).form_valid(form)
 
 

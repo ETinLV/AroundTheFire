@@ -3,6 +3,7 @@
 {% block title %}
     Create a Campsite
 {% endblock %}
+{% block zoomlevel %}12{% endblock %}
 {% block lat %}{{ view.kwargs.lat }}{% endblock %}
 {% block lng %}{{ view.kwargs.lng }}{% endblock %}
 
@@ -11,7 +12,7 @@
 {% endblock %}
 {% block pane-one %}
     <h4>Campsite Details</h4>
-    <form method="post" action="{% url 'location_create' %}">
+    <form method="post" action="{% url 'location_create'  %}">
     {% csrf_token %}
     {% bootstrap_form form layout='inline'%}
     <input type="submit" value="Create A Campsite" class="btn btn-success">

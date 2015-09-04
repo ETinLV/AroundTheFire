@@ -251,7 +251,7 @@
             var defautLng = Number({% block lng %}{% endblock %});
             var myLatLng2 = {lat: defautLat, lng: defautLng};
             var map = new google.maps.Map(document.getElementById('map'), {
-                zoom: 8,
+                zoom: {% block zoomlevel %}{% endblock %},
                 center: myLatLng2
             });
             var jslocations = JSON.parse('{{ jslocations }}');
