@@ -24,7 +24,7 @@ from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     url(r'^login', auth_views.login, {'template_name': 'user/login.html', 'extra_context': {'next': '/'}}, name='login'),
-    url(r'^trip/create', TripCreate.as_view(), name="trip_create"),
+    url(r'^trip/create/(?P<pk>[0-9]+)/$', TripCreate.as_view(), name="trip_create"),
     url(r'^trip/(?P<pk>[0-9]+)/$', TripDetail.as_view(), name="trip_detail"),
     url(r'^location/create/\((?P<lat>[0-9.]+), (?P<lng>\-[0-9.]+)', LocationCreate.as_view(), name="location_create"),
     url(r'^location/(?P<pk>[0-9]+)/$', LocationDetail.as_view(), name="location_detail"),

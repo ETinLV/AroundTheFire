@@ -5,24 +5,30 @@
 {% endblock %}
 {#TODOL find the proper lat.lng#}
 {% block zoomlevel %}10{% endblock %}
-{% block lat %}{{ location.lat }}{% endblock %}
-{% block lng %}{{ location.lng }}{% endblock %}
+{% block lat %}{{ trip.location.lat }}{% endblock %}
+{% block lng %}{{ trip.location.lng }}{% endblock %}
 
 {% block pane-one-title %}
-    
+    Trip Details
 {% endblock %}
 
 {% block pane-one %}
-    <h4></h4>
-    
+    <h4>{{ trip.location.name }}</h4>
+    <p>{{ trip.start_date }}-{{ trip.end_date }}</p>
 {% endblock %}
 
 {% block pane-two-title %}
-    
+    {% if upcoming %}
+        upcoming
+        {% else %}
+        past
+    {% endif %}
 {% endblock %}
 
 {% block pane-two %}
-
+    {% for person in trip.attending.all %}
+        <pr>{{ Person }}</pr>
+    {% endfor %}
 {% endblock %}
 
 {% block pane-three-title %}
@@ -30,5 +36,5 @@
 {% endblock %}
 
 {% block pane-three %}
-    <iframe id="forecast_embed" type="text/html" frameborder="0" height="245" width="100%" src="http://forecast.io/embed/#lat={{ view.kwargs.lat }}&lon={{ view.kwargs.lng }}"> </iframe>
+    <iframe id="forecast_embed" type="text/html" frameborder="0" height="245" width="100%" src="http://forecast.io/embed/#lat={{ trip.location.lat }}&lon={{ trip.location.lat }}&name={{ trip.location.name }}"> </iframe>
 {% endblock %}

@@ -1,3 +1,4 @@
+import datetime
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
@@ -89,8 +90,27 @@ class TripDetail(DetailView):
     model = Trip
     template_name = 'trip/detail.html'
 
+    def get_context_data(self, **kwargs):
+        """
+        Add extra content to determine if the trip is over or not
+        :param kwargs:
+        :return:
+        """
+        """
+        :param kwargs:
+        :return:
+        """
+        context = super(TripDetail, self).get_context_data(**kwargs)
+        if datetime.datetime.now().year <= self.object.end_date.year and \
+            datetime.datetime.now().month <= self.object.end_date.month and \
+                datetime.datetime.now().day <= self.object.end_date.day:
+                    context['upcoming'] = True
+        else:
+            context['upcoming'] = False
+        #TODO There HAS to be a better way than this....
+        return context
 
-# TODO add the adress into the location
+
 class TripCreate(CreateView):
     model = Trip
     fields = ('start_date', 'end_date')
@@ -113,8 +133,5 @@ class TripCreate(CreateView):
         form.instance.owner = self.request.user.camper
         form.instance.location = Location.objects.get(pk=self.kwargs['pk'])
         return super(TripCreate, self).form_valid(form)
-
-
-# TODO: when creating trip, can click map to create new site and return to trip
 
 
