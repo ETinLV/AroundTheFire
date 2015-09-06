@@ -196,8 +196,12 @@
             <div class="collapse navbar-collapse"
                  id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
-                    <li class="{% url 'home' %}"><a href="#">Home</a></li>
-{#                                  <li><a href="#">Link</a></li>#}
+                    <li><a href="{% url 'home' %}">Home</a></li>
+                    {% if user.id %}
+                        <li><a href='' data-toggle="modal" data-target="#LoginModal">Logout</a></li>
+                    {% else %}
+                        <li><a href='' data-toggle="modal" data-target="#LoginModal">Login</a></li>
+                    {% endif %}
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle"
                            data-toggle="dropdown">Dropdown <b class="caret"></b></a>
@@ -252,13 +256,17 @@
             var myLatLng2 = {lat: defautLat, lng: defautLng};
             var map = new google.maps.Map(document.getElementById('map'), {
                 zoom: {% block zoomlevel %}{% endblock %},
-                center: myLatLng2
+                center: myLatLng2,
+                mapTypeId: google.maps.MapTypeId.TERRAIN
             });
+
+
             var jslocations = JSON.parse('{{ jslocations }}');
             for (loc in jslocations) {
                 placeMarker(loc);
 
             }
+
 // code for creating new mark and info window on map click
             var infowindownew = new google.maps.InfoWindow(
               {
@@ -320,7 +328,9 @@
                     <h4 class="panel-title">
                         <a data-toggle="collapse" href="#layers">
                             <i class="fa fa-list-alt"></i>
+
                             {% block pane-one-title %}
+
                             {% endblock %}
                         </a>
                   <span class="pull-right slide-submenu">
@@ -331,17 +341,9 @@
                 <div id="layers" class="panel-collapse collapse in">
                     <div class="panel-body list-group">
 
-                        <a href="#" class="list-group-item">
-                            <i class="fa fa-globe"></i>
                             {% block pane-one %}
                             {% endblock %}
-                        </a>
-{#                        <a href="#" class="list-group-item">#}
-{#                            <i class="fa fa-globe"></i> Bing#}
-{#                        </a>#}
-{#                        <a href="#" class="list-group-item">#}
-{#                            <i class="fa fa-globe"></i> WMS#}
-{#                        </a>#}
+
                     </div>
                 </div>
             </div>
@@ -350,17 +352,19 @@
                     <h4 class="panel-title">
                         <a data-toggle="collapse" href="#properties">
                             <i class="fa fa-list-alt"></i>
+
                             {% block pane-two-title %}
                             {% endblock %}
+
                         </a>
                     </h4>
                 </div>
                 <div id="properties" class="panel-collapse collapse in">
                     <div class="panel-body">
-                        <p>
+
                             {% block pane-two %}
                             {% endblock %}
-                        </p>
+
                     </div>
                 </div>
             </div>
@@ -374,8 +378,10 @@
                     <h4 class="panel-title">
                         <a data-toggle="collapse" href="#taskpane">
                             <i class="fa fa-tasks"></i>
+
                             {% block pane-three-title %}
                             {% endblock %}
+
                         </a>
                   <span class="pull-right slide-submenu">
                     <i class="fa fa-chevron-right"></i>
@@ -385,8 +391,10 @@
                 <div id="taskpane" class="panel-collapse collapse in">
                     <div class="panel-body">
                         <p>
+
                             {% block pane-three %}
                             {% endblock %}
+
                         </p>
                     </div>
                 </div>
@@ -402,6 +410,54 @@
 </div>
 </div>
 </body>
-<script async defer
-        src="https://maps.googleapis.com/maps/api/js?signed_in=true&callback=initMap"></script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?signed_in=true&callback=initMap"></script>
+
+<div class="container">
+
+  <!-- Modal -->
+  <div class="modal fade" id="LoginModal" role="dialog">
+    <div class="modal-dialog">
+
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 style="color:red;"><span class="glyphicon glyphicon-lock"></span> Login</h4>
+        </div>
+        <div class="modal-body">
+          <form role="form" method="post" action="{% url 'login' %}">
+              {% csrf_token %}
+            <input type="hidden" name="next" value="{{ next }}">
+            <div class="form-group">
+              <label for="usrname"><span class="glyphicon glyphicon-user"></span> Username</label>
+              <input type="text" class="form-control" id="usrname" placeholder="Enter Username">
+            </div>
+            <div class="form-group">
+              <label for="psw"><span class="glyphicon glyphicon-eye-open"></span> Password</label>
+              <input type="text" class="form-control" id="psw" placeholder="Enter password">
+            </div>
+            <div class="checkbox">
+              <label><input type="checkbox" value="" checked>Remember me</label>
+            </div>
+            <button type="submit" class="btn btn-default btn-success btn-block"><span class="glyphicon glyphicon-off"></span> Login</button>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-default btn-default pull-left" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
+          <p>Not a member? <a href="{% url 'register' %}">Sign Up</a></p>
+          <p>Forgot <a href="#">Password?</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% block modal %}
+{% endblock %}
+
+$('#post-form').on('submit', function(event){
+    event.preventDefault();
+    console.log("form submitted!")  // sanity check
+    create_post();
+});
+
 </html>

@@ -12,25 +12,50 @@
 {% endblock %}
 {% block pane-one %}
     <h4>Invited To</h4>
-    {% if camper.invited_trips  %}
-        {% for trip in camper.invited_trips %}
-            <p>{{ trip.location.name }}</p>
-            <p>{{ trip.start_date }}<p>
-            <p>{{ trip.end_date }}</p>
-            {% endfor %}
-            {% else%}
+    {% if camper.invited.count > 0  %}
+        {% for trip in camper.invited.all %}
+                <a href="{% url 'trip_detail' trip.pk %}" class="list-group-item">
+                <i class="fa fa-globe"></i>
+                <p>{{ trip.location.name }}</p>
+                <p>{{ trip.start_date }} - {{ trip.end_date }}</p>
+
+{#                TODO: remove the inlne style tags!#}
+                <form method="post" action="{% url 'accept_decline' trip.pk %}" style="float: left; padding-right: 10px">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="attending">
+                <input type="hidden" name="trip" value="{{ trip.pk }}">
+                <input type="hidden" name="attending" value="{{ camper.pk }}">
+                <input type="submit" value="I'm Going" class="btn btn-xs btn-success">
+                </form>
+
+                <form method="post" action="{% url 'accept_decline' trip.pk %}" style="clear: right">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="declined">
+                <input type="hidden" name="trip" value="{{ trip.pk }}">
+                <input type="hidden" name="declined" value="{{ camper.pk }}">
+                <input type="submit" value="Can't Make It" class="btn btn-xs btn-success">
+                </form>
+
+
+            </a>
+        {% endfor %}
+    {% else %}
                 <p>You Currently Aren't invited On Any Trips</p>
-        {% endif %}
+    {% endif %}
+
     <h4>Upcoming:</h4>
     {% if camper.upcoming_trips  %}
         {% for trip in camper.upcoming_trips %}
-            <p>{{ trip.location.name }} <--this should be a link</p>
-            <p>{{ trip.start_date }}<p>
-            <p>{{ trip.end_date }}</p>
-            {% endfor %}
-            {% else%}
-                <p>You Have No Upcoming Trips!</p>
-        {% endif %}
+            <a href="{% url 'trip_detail' trip.pk %}" class="list-group-item">
+            <i class="fa fa-globe"></i>
+            <p>{{ trip.location.name }}</p>
+            <p>{{ trip.start_date }} - {{ trip.end_date }}</p>
+            </a>
+        {% endfor %}
+    {% else%}
+
+        <p>You Have No Upcoming Trips!</p>
+    {% endif %}
 {% endblock %}
 
 {% block pane-two-title %}
@@ -38,21 +63,24 @@
 {% endblock %}
 
 {% block pane-two %}
-        {% if camper.past_trips  %}
+    {% if camper.past_trips  %}
         {% for trip in camper.past_trips %}
+            <a href="{% url 'trip_detail' trip.pk %}" class="list-group-item">
+            <i class="fa fa-globe"></i>
             <p>{{ trip.location.name }}</p>
-            <p>{{ trip.start_date }}<p>
-            <p>{{ trip.end_date }}</p>
+            <p>{{ trip.start_date }} - {{ trip.end_date }}</p>
+            </a>
             {% endfor %}
-            {% else%}
-                <p>You Haven't Been On Any Trips Yet!</p>
-        {% endif %}
+    {% else%}
+        <p>You Haven't Been On Any Trips Yet!</p>
+    {% endif %}
 {% endblock %}
 
 {% block pane-three-title %}
-    Weather - Home Locations
+
 {% endblock %}
 
 {% block pane-three %}
-    <iframe id="forecast_embed" type="text/html" frameborder="0" height="245" width="100%" src="http://forecast.io/embed/#lat={{ camper.lat }}&lon={{ camper.lng }}&name={{ camper.city }}"> </iframe>
+    <iframe id="forecast_embed" type="text/html" frameborder="0" height="245" width="100%" src="http://forecast.io/embed/#lat={{ camper.lat }}&lon={{ camper.lng }}&name={{ camper.zip }}"> </iframe>
 {% endblock %}
+

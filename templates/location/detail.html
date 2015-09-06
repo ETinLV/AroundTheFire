@@ -24,14 +24,11 @@
 {% endblock %}
 
 {% block pane-two %}
-    Average Rating =
+        <p>Average Rating = X.X</p>
+    <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#myModal">See Reviews</button>
 
-    <p>This would be nicer if it was just some details, and then a modal popped up
-    for detail review information</p>
-
-    <h5>Other Person:</h5>
-    <p>This would be nicer if it was just some details, and then a modal popped up
-    for detail review information</p>
+    <h5>Description:</h5>
+    <p></p>
     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam
     sollicitudin sem id sapien convallis consequat at eget metus. Nullam
     convallis tortor interdum ipsum euismod vestibulum ultrices sit amet neque.
@@ -43,18 +40,8 @@
     facilisis consequat diam. Morbi lacinia ligula vitae ipsum varius, sit amet
     bibendum sem vehicula. Etiam vehicula libero ipsum, ac rhoncus nulla luctus
     a.</p>
-    <h5>Other Person:</h5>
-    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam
-    sollicitudin sem id sapien convallis consequat at eget metus. Nullam
-    convallis tortor interdum ipsum euismod vestibulum ultrices sit amet neque.
-    In et sapien nibh. Pellentesque non lobortis dolor. Donec scelerisque,
-    libero eu maximus vestibulum, neque nunc sagittis velit, ut elementum est
-    massa non ante. Maecenas vitae facilisis justo, elementum facilisis purus.
-    Sed sem lectus, ultricies dapibus nisi eget, auctor sodales enim. Maecenas
-    vitae nunc lacus. Vestibulum turpis massa, sollicitudin ut nisi et,
-    facilisis consequat diam. Morbi lacinia ligula vitae ipsum varius, sit amet
-    bibendum sem vehicula. Etiam vehicula libero ipsum, ac rhoncus nulla luctus
-    a.</p>
+    <h5>Picture:</h5>
+    <p></p>
 {% endblock %}
 
 {% block pane-three-title %}
@@ -65,4 +52,105 @@
     <iframe id="forecast_embed" type="text/html" frameborder="0" height="245"
             width="100%"
             src="http://forecast.io/embed/#lat={{ location.lat }}&lon={{ location.lng }}&name={{ location.name }}"></iframe>
+{% endblock %}
+
+{% block modal %}
+    <div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">User Reviews</h4>
+      </div>
+      <div class="modal-body">
+
+            <h5>Other Person:</h5>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam
+            sollicitudin sem id sapien convallis consequat at eget metus. Nullam
+            convallis tortor interdum ipsum euismod vestibulum ultrices sit amet neque.
+            In et sapien nibh. Pellentesque non lobortis dolor. Donec scelerisque,
+            libero eu maximus vestibulum, neque nunc sagittis velit, ut elementum est
+            massa non ante. Maecenas vitae facilisis justo, elementum facilisis purus.
+            Sed sem lectus, ultricies dapibus nisi eget, auctor sodales enim. Maecenas
+            vitae nunc lacus. Vestibulum turpis massa, sollicitudin ut nisi et,
+            facilisis consequat diam. Morbi lacinia ligula vitae ipsum varius, sit amet
+            bibendum sem vehicula. Etiam vehicula libero ipsum, ac rhoncus nulla luctus
+            a.</p>
+
+            <h5>Other Person:</h5>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam
+            sollicitudin sem id sapien convallis consequat at eget metus. Nullam
+            convallis tortor interdum ipsum euismod vestibulum ultrices sit amet neque.
+            In et sapien nibh. Pellentesque non lobortis dolor. Donec scelerisque,
+            libero eu maximus vestibulum, neque nunc sagittis velit, ut elementum est
+            massa non ante. Maecenas vitae facilisis justo, elementum facilisis purus.
+            Sed sem lectus, ultricies dapibus nisi eget, auctor sodales enim. Maecenas
+            vitae nunc lacus. Vestibulum turpis massa, sollicitudin ut nisi et,
+            facilisis consequat diam. Morbi lacinia ligula vitae ipsum varius, sit amet
+            bibendum sem vehicula. Etiam vehicula libero ipsum, ac rhoncus nulla luctus
+            a.</p>
+
+
+            <h5>Other Person:</h5>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam
+            sollicitudin sem id sapien convallis consequat at eget metus. Nullam
+            convallis tortor interdum ipsum euismod vestibulum ultrices sit amet neque.
+            In et sapien nibh. Pellentesque non lobortis dolor. Donec scelerisque,
+            libero eu maximus vestibulum, neque nunc sagittis velit, ut elementum est
+            massa non ante. Maecenas vitae facilisis justo, elementum facilisis purus.
+            Sed sem lectus, ultricies dapibus nisi eget, auctor sodales enim. Maecenas
+            vitae nunc lacus. Vestibulum turpis massa, sollicitudin ut nisi et,
+            facilisis consequat diam. Morbi lacinia ligula vitae ipsum varius, sit amet
+            bibendum sem vehicula. Etiam vehicula libero ipsum, ac rhoncus nulla luctus
+            a.</p>
+
+            <h5>Other Person:</h5>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam
+            sollicitudin sem id sapien convallis consequat at eget metus. Nullam
+            convallis tortor interdum ipsum euismod vestibulum ultrices sit amet neque.
+            In et sapien nibh. Pellentesque non lobortis dolor. Donec scelerisque,
+            libero eu maximus vestibulum, neque nunc sagittis velit, ut elementum est
+            massa non ante. Maecenas vitae facilisis justo, elementum facilisis purus.
+            Sed sem lectus, ultricies dapibus nisi eget, auctor sodales enim. Maecenas
+            vitae nunc lacus. Vestibulum turpis massa, sollicitudin ut nisi et,
+            facilisis consequat diam. Morbi lacinia ligula vitae ipsum varius, sit amet
+            bibendum sem vehicula. Etiam vehicula libero ipsum, ac rhoncus nulla luctus
+            a.</p>
+
+            <h5>Other Person:</h5>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam
+            sollicitudin sem id sapien convallis consequat at eget metus. Nullam
+            convallis tortor interdum ipsum euismod vestibulum ultrices sit amet neque.
+            In et sapien nibh. Pellentesque non lobortis dolor. Donec scelerisque,
+            libero eu maximus vestibulum, neque nunc sagittis velit, ut elementum est
+            massa non ante. Maecenas vitae facilisis justo, elementum facilisis purus.
+            Sed sem lectus, ultricies dapibus nisi eget, auctor sodales enim. Maecenas
+            vitae nunc lacus. Vestibulum turpis massa, sollicitudin ut nisi et,
+            facilisis consequat diam. Morbi lacinia ligula vitae ipsum varius, sit amet
+            bibendum sem vehicula. Etiam vehicula libero ipsum, ac rhoncus nulla luctus
+            a.</p>
+
+            <h5>Other Person:</h5>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam
+            sollicitudin sem id sapien convallis consequat at eget metus. Nullam
+            convallis tortor interdum ipsum euismod vestibulum ultrices sit amet neque.
+            In et sapien nibh. Pellentesque non lobortis dolor. Donec scelerisque,
+            libero eu maximus vestibulum, neque nunc sagittis velit, ut elementum est
+            massa non ante. Maecenas vitae facilisis justo, elementum facilisis purus.
+            Sed sem lectus, ultricies dapibus nisi eget, auctor sodales enim. Maecenas
+            vitae nunc lacus. Vestibulum turpis massa, sollicitudin ut nisi et,
+            facilisis consequat diam. Morbi lacinia ligula vitae ipsum varius, sit amet
+            bibendum sem vehicula. Etiam vehicula libero ipsum, ac rhoncus nulla luctus
+            a.</p>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
 {% endblock %}
