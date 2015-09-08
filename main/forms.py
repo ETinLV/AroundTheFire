@@ -1,3 +1,4 @@
+import cloudinary, cloudinary.uploader, cloudinary.forms
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
@@ -14,9 +15,11 @@ class CamperCreateForm(UserCreationForm):
         model = User
         fields = ('username', 'email')
 
+
 class TripCreateForm(ModelForm):
     model = Trip
     fields = ('date')
 
 
-
+class UploadFileForm(forms.Form):
+    image  = cloudinary.forms.CloudinaryJsFileField()

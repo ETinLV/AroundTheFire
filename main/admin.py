@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from main.models import Trip, Location, Camper
+from main.models import Trip, Location, Camper, Photo
 
 
 @admin.register(Camper)
@@ -15,3 +15,7 @@ class TripAdmin(admin.ModelAdmin):
 @admin.register(Location)
 class LocationAdmin(admin.ModelAdmin):
     list_display = ('name', 'lat', 'lng', 'zip','pk')
+
+@admin.register(Photo)
+class PhotoAdmin(admin.ModelAdmin):
+    list_display = ('image','url')

@@ -37,6 +37,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'cloudinary',
     'bootstrap3',
     'main',
 
@@ -134,3 +135,4 @@ BOOTSTRAP3 = {
     #  (affects django-bootstrap3 template tags)
     'include_jquery': True,
 }
+

@@ -18,4 +18,5 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^$', Home.as_view(), name="home"),
     url(r'^trip/update/(?P<pk>[0-9]+)/$', AcceptDecline.as_view(), name="accept_decline"),
+    url(r'^location/upload/(?P<pk>[0-9]+)/$', main.views.image_upload, name="image_upload"),
 ]

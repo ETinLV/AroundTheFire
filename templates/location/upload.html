@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+{% load cloudinary %}
+<script src="{% static "jquery-2.1.4.min.js" %}"></script>
+{% cloudinary_includes %}
+{% cloudinary_js_config %}
+
+
+
+
+
+<form action="{% url 'image_upload' location.pk %}" method="post">
+  {% csrf_token %}
+  {{ form.image }}
+  <input type="submit" value="Submit" />
+</form>
+
+</body>
+</html>

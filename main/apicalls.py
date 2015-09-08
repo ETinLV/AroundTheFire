@@ -3,7 +3,6 @@ import requests
 from main.apikeys import googlekey, trailkey, weatherkey
 from main.models import Location
 
-
 def make_address(object, zip=None, lat=None, lng=None):
     """
     Takes an object and either a zip code or lat/lng value and creates the other
@@ -67,6 +66,9 @@ def api_create_locations(lat=None, lng=None):
 
 def get_weather(lat, lng):
     response = requests.get(
-        "http://api.wunderground.com/api/{weatherkey}/forecast/geolookup/conditions/q/{lat},{lng}.json".format(weatherkey=weatherkey, lat=lat, lng=lng))
+        "http://api.wunderground.com/api/{weatherkey}/forecast/geolookup/conditions/q/{lat},{lng}.json".format(
+            weatherkey=weatherkey, lat=lat, lng=lng))
     data = json.loads(response.content.decode('utf-8'))
     return data
+
+
