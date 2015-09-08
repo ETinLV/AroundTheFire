@@ -34,7 +34,7 @@ class Home(View):
         # if user is logged in, send to homepage
         if self.request.user.pk is not None:
             context = {'camper': self.request.user.camper,
-                       'locations': Location.objects.all(),
+                       'locations': Location.objects.select_related().all(),
                        'jslocations': mark_safe(self.jslocations),
                        }
             return render_to_response(template_name='user/home.html',
@@ -196,5 +196,5 @@ def image_upload(request, pk):
             photo.url = image.url
             photo.save()
             return HttpResponseRedirect(image.url)
-    return render_to_response('location/upload.html',
+    return render_to_response('location/{}'.format(location.pk),
                               RequestContext(request, {'form': form, 'location': location}))

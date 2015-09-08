@@ -16,6 +16,7 @@
         {% for trip in camper.invited.all %}
                 <a href="{% url 'trip_detail' trip.pk %}" class="list-group-item">
                 <i class="fa fa-globe"></i>
+                <p>{{ trip.title }}</p>
                 <p>{{ trip.location.name }}</p>
                 <p>{{ trip.start_date }} - {{ trip.end_date }}</p>
 
@@ -48,8 +49,17 @@
         {% for trip in camper.upcoming_trips %}
             <a href="{% url 'trip_detail' trip.pk %}" class="list-group-item">
             <i class="fa fa-globe"></i>
-            <p>{{ trip.location.name }}</p>
-            <p>{{ trip.start_date }} - {{ trip.end_date }}</p>
+            <p>What: {{ trip.title }}</p>
+            <p>Where: {{ trip.location.name }}</p>
+            <p>When: {{ trip.start_date }} - {{ trip.end_date }}</p>
+            <p>Created By: {{ trip.owner }}</p>
+            {% if trip.attending.all %}
+            <p>Attending: {% for person in trip.attending.all %}
+                {{ person.user.username }}</p>
+                {% endfor %}
+            {% else %}
+                <p>No One has accept yet</p>
+            {% endif %}
             </a>
         {% endfor %}
     {% else%}
@@ -67,8 +77,13 @@
         {% for trip in camper.past_trips %}
             <a href="{% url 'trip_detail' trip.pk %}" class="list-group-item">
             <i class="fa fa-globe"></i>
+            <p>{{ trip.title }}</p>
             <p>{{ trip.location.name }}</p>
             <p>{{ trip.start_date }} - {{ trip.end_date }}</p>
+            <p>{{ trip.owner }}</p>
+            <p>{% for person in trip.attending.all %}
+                {{ person.username }}</p>
+                {% endfor %}
             </a>
             {% endfor %}
     {% else%}
