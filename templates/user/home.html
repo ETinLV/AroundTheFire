@@ -13,7 +13,7 @@
 {% block pane-one %}
     <h4>Invited To</h4>
     {% if camper.invited.count > 0  %}
-        {% for trip in camper.invited.all %}
+        {% for trip in camper.invited_trips %}
                 <a href="{% url 'trip_detail' trip.pk %}" class="list-group-item">
                 <i class="fa fa-globe"></i>
                 <p>{{ trip.title }}</p>
@@ -36,7 +36,6 @@
                 <input type="hidden" name="declined" value="{{ camper.pk }}">
                 <input type="submit" value="Can't Make It" class="btn btn-xs btn-success">
                 </form>
-
 
             </a>
         {% endfor %}

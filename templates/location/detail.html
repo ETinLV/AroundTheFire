@@ -17,7 +17,7 @@
     <p>{{ location.city }}</p>
     <br>
     {% if photos %}
-        <img src="{{ photos.0.image.url }}" height="200px" width="200px">
+        <img src="{{ photos.0.url }}" height="200px" width="200px">
         <br><BR>
     <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#myModal">See More Photos</button>
     {% else %}
@@ -33,24 +33,10 @@
 {% endblock %}
 
 {% block pane-two %}
+
         <p>Average Rating = X.X</p>
     <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#myModal">See Reviews</button>
 
-    <h5>Description:</h5>
-    <p></p>
-    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam
-    sollicitudin sem id sapien convallis consequat at eget metus. Nullam
-    convallis tortor interdum ipsum euismod vestibulum ultrices sit amet neque.
-    In et sapien nibh. Pellentesque non lobortis dolor. Donec scelerisque,
-    libero eu maximus vestibulum, neque nunc sagittis velit, ut elementum est
-    massa non ante. Maecenas vitae facilisis justo, elementum facilisis purus.
-    Sed sem lectus, ultricies dapibus nisi eget, auctor sodales enim. Maecenas
-    vitae nunc lacus. Vestibulum turpis massa, sollicitudin ut nisi et,
-    facilisis consequat diam. Morbi lacinia ligula vitae ipsum varius, sit amet
-    bibendum sem vehicula. Etiam vehicula libero ipsum, ac rhoncus nulla luctus
-    a.</p>
-    <h5>Picture:</h5>
-    <p></p>
 {% endblock %}
 
 {% block pane-three-title %}
@@ -75,84 +61,16 @@
       </div>
       <div class="modal-body">
 
-            <h5>Other Person:</h5>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam
-            sollicitudin sem id sapien convallis consequat at eget metus. Nullam
-            convallis tortor interdum ipsum euismod vestibulum ultrices sit amet neque.
-            In et sapien nibh. Pellentesque non lobortis dolor. Donec scelerisque,
-            libero eu maximus vestibulum, neque nunc sagittis velit, ut elementum est
-            massa non ante. Maecenas vitae facilisis justo, elementum facilisis purus.
-            Sed sem lectus, ultricies dapibus nisi eget, auctor sodales enim. Maecenas
-            vitae nunc lacus. Vestibulum turpis massa, sollicitudin ut nisi et,
-            facilisis consequat diam. Morbi lacinia ligula vitae ipsum varius, sit amet
-            bibendum sem vehicula. Etiam vehicula libero ipsum, ac rhoncus nulla luctus
-            a.</p>
-
-            <h5>Other Person:</h5>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam
-            sollicitudin sem id sapien convallis consequat at eget metus. Nullam
-            convallis tortor interdum ipsum euismod vestibulum ultrices sit amet neque.
-            In et sapien nibh. Pellentesque non lobortis dolor. Donec scelerisque,
-            libero eu maximus vestibulum, neque nunc sagittis velit, ut elementum est
-            massa non ante. Maecenas vitae facilisis justo, elementum facilisis purus.
-            Sed sem lectus, ultricies dapibus nisi eget, auctor sodales enim. Maecenas
-            vitae nunc lacus. Vestibulum turpis massa, sollicitudin ut nisi et,
-            facilisis consequat diam. Morbi lacinia ligula vitae ipsum varius, sit amet
-            bibendum sem vehicula. Etiam vehicula libero ipsum, ac rhoncus nulla luctus
-            a.</p>
-
-
-            <h5>Other Person:</h5>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam
-            sollicitudin sem id sapien convallis consequat at eget metus. Nullam
-            convallis tortor interdum ipsum euismod vestibulum ultrices sit amet neque.
-            In et sapien nibh. Pellentesque non lobortis dolor. Donec scelerisque,
-            libero eu maximus vestibulum, neque nunc sagittis velit, ut elementum est
-            massa non ante. Maecenas vitae facilisis justo, elementum facilisis purus.
-            Sed sem lectus, ultricies dapibus nisi eget, auctor sodales enim. Maecenas
-            vitae nunc lacus. Vestibulum turpis massa, sollicitudin ut nisi et,
-            facilisis consequat diam. Morbi lacinia ligula vitae ipsum varius, sit amet
-            bibendum sem vehicula. Etiam vehicula libero ipsum, ac rhoncus nulla luctus
-            a.</p>
-
-            <h5>Other Person:</h5>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam
-            sollicitudin sem id sapien convallis consequat at eget metus. Nullam
-            convallis tortor interdum ipsum euismod vestibulum ultrices sit amet neque.
-            In et sapien nibh. Pellentesque non lobortis dolor. Donec scelerisque,
-            libero eu maximus vestibulum, neque nunc sagittis velit, ut elementum est
-            massa non ante. Maecenas vitae facilisis justo, elementum facilisis purus.
-            Sed sem lectus, ultricies dapibus nisi eget, auctor sodales enim. Maecenas
-            vitae nunc lacus. Vestibulum turpis massa, sollicitudin ut nisi et,
-            facilisis consequat diam. Morbi lacinia ligula vitae ipsum varius, sit amet
-            bibendum sem vehicula. Etiam vehicula libero ipsum, ac rhoncus nulla luctus
-            a.</p>
-
-            <h5>Other Person:</h5>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam
-            sollicitudin sem id sapien convallis consequat at eget metus. Nullam
-            convallis tortor interdum ipsum euismod vestibulum ultrices sit amet neque.
-            In et sapien nibh. Pellentesque non lobortis dolor. Donec scelerisque,
-            libero eu maximus vestibulum, neque nunc sagittis velit, ut elementum est
-            massa non ante. Maecenas vitae facilisis justo, elementum facilisis purus.
-            Sed sem lectus, ultricies dapibus nisi eget, auctor sodales enim. Maecenas
-            vitae nunc lacus. Vestibulum turpis massa, sollicitudin ut nisi et,
-            facilisis consequat diam. Morbi lacinia ligula vitae ipsum varius, sit amet
-            bibendum sem vehicula. Etiam vehicula libero ipsum, ac rhoncus nulla luctus
-            a.</p>
-
-            <h5>Other Person:</h5>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam
-            sollicitudin sem id sapien convallis consequat at eget metus. Nullam
-            convallis tortor interdum ipsum euismod vestibulum ultrices sit amet neque.
-            In et sapien nibh. Pellentesque non lobortis dolor. Donec scelerisque,
-            libero eu maximus vestibulum, neque nunc sagittis velit, ut elementum est
-            massa non ante. Maecenas vitae facilisis justo, elementum facilisis purus.
-            Sed sem lectus, ultricies dapibus nisi eget, auctor sodales enim. Maecenas
-            vitae nunc lacus. Vestibulum turpis massa, sollicitudin ut nisi et,
-            facilisis consequat diam. Morbi lacinia ligula vitae ipsum varius, sit amet
-            bibendum sem vehicula. Etiam vehicula libero ipsum, ac rhoncus nulla luctus
-            a.</p>
+            <h4>Been Here? Leave a Review!</h4>
+            <form method="post" action="{% url 'review_create' pk=location.pk %}">
+            {% csrf_token %}
+                <div class="form-group">
+                <label for="reviewContent">How Was Your Trip?</label>
+                <textarea name='content' class="form-control" id="reviewContent" placeholder="Here's my Story" rows="3"></textarea>
+                <input type="hidden" name='location' value="{{ location.pk }}">
+                </div>
+                <input type="submit" value="Leave A Review" class="btn btn-success">
+            </form>
 
       </div>
       <div class="modal-footer">

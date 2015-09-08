@@ -3,6 +3,7 @@ import json
 import cloudinary
 
 from cloudinary.forms import cl_init_js_callbacks
+from django.contrib.admin.widgets import AdminDateWidget
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
@@ -19,7 +20,7 @@ from cloudinary import api
 
 from main.apicalls import make_address
 from main.forms import CamperCreateForm, UploadFileForm
-from main.models import Camper, Trip, Location, Photo
+from main.models import Camper, Trip, Location, Photo, Review
 
 
 class Home(View):
@@ -106,6 +107,33 @@ class LocationCreate(CreateView):
         make_address(object=form.instance, lat=form.data['lat'],
                      lng=form.data['lng'])
         return super(LocationCreate, self).form_valid(form)
+
+class ReviewCreate(CreateView):
+    model = Review
+    fields = ('content',)
+    template_name = "location/create_review.html"
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(ReviewCreate, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(ReviewCreate, self).get_context_data(**kwargs)
+        context['location'] = Location.objects.get(pk=self.kwargs['pk'])
+        return context
+
+    def get_success_url(self):
+        return reverse(viewname='location_detail', kwargs={'pk': self.kwargs['pk']})
+
+    def form_valid(self, form):
+        """Make the owner of the trip the user who created it"""
+        if form.is_valid():
+            review = form.instance
+            review.content = form.cleaned_data['content']
+            review.location = Location.objects.get(pk=self.kwargs['pk'])
+            review.owner = self.request.user.camper
+            review.save()
+        return super(ReviewCreate, self).form_valid(form)
 
 
 class TripDetail(DetailView):

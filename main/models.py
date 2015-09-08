@@ -37,6 +37,12 @@ class Camper(models.Model):
                   self.attending.filter(end_date__gt=datetime.datetime.now())),
             key=attrgetter('end_date')))
 
+    @property
+    def invited_trips(self):
+        return set(sorted(
+            chain(self.invited.filter(end_date__gt=datetime.datetime.now())),
+            key=attrgetter('end_date')))
+
 
 class Trip(models.Model):
     """Model for trips created by campers"""
@@ -66,7 +72,7 @@ class Location(models.Model):
     lat = models.CharField(max_length=30, null=True)
     lng = models.CharField(max_length=30, null=True)
     city = models.CharField(max_length=100, null=True, blank=True)
-
+    api_id = models.CharField(max_length=100, unique=True, null=True)
     def __str__(self):
         return '{}'.format(self.name)
 
@@ -80,4 +86,9 @@ class Photo(models.Model):
 class Message(models.Model):
     owner = models.ForeignKey(Camper, null=True, blank=True)
     trip = models.ForeignKey(Trip, null=True, blank=True)
+    content = models.TextField(null=True, blank=True)
+
+class Review(models.Model):
+    owner = models.ForeignKey(Camper, null=True, blank=True)
+    location = models.ForeignKey(Location, null=True, blank=True)
     content = models.TextField(null=True, blank=True)

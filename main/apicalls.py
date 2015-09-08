@@ -1,7 +1,8 @@
 import json
 import requests
 from main.apikeys import googlekey, trailkey, weatherkey
-from main.models import Location
+from main.models import Location, Photo
+
 
 def make_address(object, zip=None, lat=None, lng=None):
     """
@@ -60,6 +61,10 @@ def api_create_locations(lat=None, lng=None):
         'places']:
         location = Location.objects.create(lat=object['lat'], lng=object['lon'])
         make_address(location, lat=location.lat, lng=location.lng)
+        for image in object['activities']:
+            if image['thumbnail']:
+                Photo.objects.create(url=image['thumbnail'], location=location)
+        location.api_id = object['unique_id']
         location.name = object['name']
         location.save()
 

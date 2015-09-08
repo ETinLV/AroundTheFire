@@ -3,7 +3,7 @@
 {% block title %}
     location.name
 {% endblock %}
-{#TODOL find the proper lat.lng#}
+
 {% block zoomlevel %}10{% endblock %}
 {% block lat %}{{ trip.location.lat }}{% endblock %}
 {% block lng %}{{ trip.location.lng }}{% endblock %}
@@ -12,22 +12,44 @@
     Trip Details
 {% endblock %}
 
+
 {% block pane-one %}
-    <h4>{{ trip.location.name }}</h4>
-    <p>{{ trip.start_date }}-{{ trip.end_date }}</p>
+    <a href="{% url 'location_detail' trip.location.pk %}" class="list-group-item">
+        <i class="fa fa-globe"></i>
+        <h4>{{ trip.location.name }}</h4>
+        <p>{{ trip.start_date }}-{{ trip.end_date }}</p>
+    </a>
 {% endblock %}
 
 {% block pane-two-title %}
-    {% if upcoming %}
-        upcoming
-        {% else %}
-        past
+    {% if upcoming and trip.attending.count <= trip.max_capacity and user.camper in trip.invited.all %}
+        <form method="post" action="{% url 'accept_decline' trip.pk %}" style="clear: right">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="attending">
+        <input type="hidden" name="trip" value="{{ trip.pk }}">
+        <input type="hidden" name="attending" value="{{ camper.pk }}">
+        <input type="submit" value="I'm Going" class="btn btn-xs btn-success">
+        </form>
+
+        <form method="post" action="{% url 'accept_decline' trip.pk %}" style="clear: right">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="declined">
+        <input type="hidden" name="trip" value="{{ trip.pk }}">
+        <input type="hidden" name="declined" value="{{ camper.pk }}">
+        <input type="submit" value="Can't Make It" class="btn btn-xs btn-success">
+        </form>
+
+        {% elif upcoming and trip.attending.count >= trip.max_capacity and user.camper in trip.invited.all %}
+            <p>This Trip Is Full</p>
+        {
     {% endif %}
 {% endblock %}
 
 {% block pane-two %}
+    <h4>{{ trip.title }}</h4>
+    <p>{{ trip.description }}</p>
     {% for person in trip.attending.all %}
-        <pr>{{ Person }}</pr>
+        <p>Campers = {{ person.user.username }}</p>
     {% endfor %}
 {% endblock %}
 

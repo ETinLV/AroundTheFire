@@ -198,7 +198,7 @@
                 <ul class="nav navbar-nav">
                     <li><a href="{% url 'home' %}">Home</a></li>
                     {% if user.id %}
-                        <li><a href='' data-toggle="modal" data-target="#LoginModal">Logout</a></li>
+                        <li><a href="{% url 'logout' %}">Logout</a></li>
                     {% else %}
                         <li><a href='' data-toggle="modal" data-target="#LoginModal">Login</a></li>
                     {% endif %}
@@ -425,17 +425,23 @@
           <h4 style="color:red;"><span class="glyphicon glyphicon-lock"></span> Login</h4>
         </div>
         <div class="modal-body">
-          <form role="form" method="post" action="{% url 'login' %}">
-              {% csrf_token %}
-            <input type="hidden" name="next" value="{{ next }}">
-            <div class="form-group">
-              <label for="usrname"><span class="glyphicon glyphicon-user"></span> Username</label>
-              <input type="text" class="form-control" id="usrname" placeholder="Enter Username">
-            </div>
-            <div class="form-group">
-              <label for="psw"><span class="glyphicon glyphicon-eye-open"></span> Password</label>
-              <input type="text" class="form-control" id="psw" placeholder="Enter password">
-            </div>
+
+
+            <form method="post" action="{% url 'login' %}">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="/">
+            <div class="form-group"><label class="sr-only" for="id_username">Username</label><input class="form-control" id="id_username" maxlength="254" name="username" placeholder="Username" required="required" title="" type="text" /></div>
+            <div class="form-group"><label class="sr-only" for="id_password">Password</label><input class="form-control" id="id_password" name="password" placeholder="Password" required="required" title="" type="password" /></div>
+
+
+
+{#              <label for="usrname"><span class="glyphicon glyphicon-user"></span> Username</label>#}
+{#              <input type="text" class="form-control" id="usrname" placeholder="Enter Username">#}
+{#            </div>#}
+{#            <div class="form-group">#}
+{#              <label for="psw"><span class="glyphicon glyphicon-eye-open"></span> Password</label>#}
+{#              <input type="text" class="form-control" id="psw" placeholder="Enter password">#}
+{#            </div>#}
             <div class="checkbox">
               <label><input type="checkbox" value="" checked>Remember me</label>
             </div>
