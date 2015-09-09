@@ -84,11 +84,19 @@ class Photo(models.Model):
     url = models.URLField(null=True)
 
 class Message(models.Model):
-    owner = models.ForeignKey(Camper, null=True, blank=True)
-    trip = models.ForeignKey(Trip, null=True, blank=True)
+    owner = models.ForeignKey(Camper, null=True, blank=True, related_name='messages')
+    trip = models.ForeignKey(Trip, null=True, blank=True, related_name='messages')
     content = models.TextField(null=True, blank=True)
+    created_at = models.DateTimeField(default=datetime.datetime.now())
+
+    class Meta:
+        ordering = ["-created_at"]
 
 class Review(models.Model):
-    owner = models.ForeignKey(Camper, null=True, blank=True)
-    location = models.ForeignKey(Location, null=True, blank=True)
+    owner = models.ForeignKey(Camper, null=True, blank=True, related_name='reviews')
+    location = models.ForeignKey(Location, null=True, blank=True, related_name='reviews')
     content = models.TextField(null=True, blank=True)
+    created_at = models.DateTimeField(default=datetime.datetime.now())
+
+    class Meta:
+        ordering = ["-created_at"]

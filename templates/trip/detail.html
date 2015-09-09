@@ -16,41 +16,62 @@
 {% block pane-one %}
     <a href="{% url 'location_detail' trip.location.pk %}" class="list-group-item">
         <i class="fa fa-globe"></i>
-        <h4>{{ trip.location.name }}</h4>
+        <h4>{{ trip.title }}</h4>
+        <h5>{{ trip.location.name }}</h5>
         <p>{{ trip.start_date }}-{{ trip.end_date }}</p>
-    </a>
-{% endblock %}
-
-{% block pane-two-title %}
-    {% if upcoming and trip.attending.count <= trip.max_capacity and user.camper in trip.invited.all %}
-        <form method="post" action="{% url 'accept_decline' trip.pk %}" style="clear: right">
-        {% csrf_token %}
-        <input type="hidden" name="action" value="attending">
-        <input type="hidden" name="trip" value="{{ trip.pk }}">
-        <input type="hidden" name="attending" value="{{ camper.pk }}">
-        <input type="submit" value="I'm Going" class="btn btn-xs btn-success">
-        </form>
-
-        <form method="post" action="{% url 'accept_decline' trip.pk %}" style="clear: right">
-        {% csrf_token %}
-        <input type="hidden" name="action" value="declined">
-        <input type="hidden" name="trip" value="{{ trip.pk }}">
-        <input type="hidden" name="declined" value="{{ camper.pk }}">
-        <input type="submit" value="Can't Make It" class="btn btn-xs btn-success">
-        </form>
-
-        {% elif upcoming and trip.attending.count >= trip.max_capacity and user.camper in trip.invited.all %}
-            <p>This Trip Is Full</p>
-        {
-    {% endif %}
-{% endblock %}
-
-{% block pane-two %}
-    <h4>{{ trip.title }}</h4>
-    <p>{{ trip.description }}</p>
+        <p>{{ trip.description }}</p>
     {% for person in trip.attending.all %}
         <p>Campers = {{ person.user.username }}</p>
     {% endfor %}
+
+    {% if upcoming and trip.attending.count <= trip.max_capacity and user.camper in trip.invited.all %}
+    <form method="post" action="{% url 'accept_decline' trip.pk %}" style="float: left">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="attending">
+    <input type="hidden" name="trip" value="{{ trip.pk }}">
+    <input type="hidden" name="attending" value="{{ camper.pk }}">
+    <input type="submit" value="I'm Going" class="btn btn-xs btn-success">
+    </form>
+
+    <form method="post" action="{% url 'accept_decline' trip.pk %}" style="clear: right">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="declined">
+    <input type="hidden" name="trip" value="{{ trip.pk }}">
+    <input type="hidden" name="declined" value="{{ camper.pk }}">
+    <input type="submit" value="Can't Make It" class="btn btn-xs btn-success">
+    </form>
+
+    {% elif upcoming and trip.attending.count >= trip.max_capacity and user.camper in trip.invited.all %}
+        <p>This Trip Is Full</p>
+    {% elif upcoming and user.camper in trip.attending.all or user.camper == trip.owner%}
+{#        <p>You are Attending This Trip</p>#}
+    {% endif %}
+{#        TODO: FIX THIS!#}
+{#    {% if photos %}#}
+{#        <img src="{{ photos.0.url }}" height="200px" width="200px">#}
+{#        <br><BR>#}
+{#    <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#myModal">See More Photos</button>#}
+{#    {% else %}#}
+{#        <p>There Are No Photos For This Trip <a href="{% url 'image_upload' trip.id %}">Upload One?</a></p>#}
+{#    {% endif %}#}
+    </a>
+
+{% endblock %}
+
+{% block pane-two-title %}
+
+{% endblock %}
+
+{% block pane-two %}
+    {% if trip.messages.all %}
+        <h4>Most Recent Group Message</h4>
+        <h5>{{ trip.messages.all.0.owner }} @ {{ trip.messages.all.0.created_at }}</h5>
+        <p>{{ trip.messages.all.0.content }}</p>
+        <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#myModal">See Messages</button>
+    {% else %}
+        <h4>There are no Messages for this trip</h4>
+        <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#myModal">Leave A Message</button>
+    {% endif %}
 {% endblock %}
 
 {% block pane-three-title %}
@@ -59,4 +80,40 @@
 
 {% block pane-three %}
     <iframe id="forecast_embed" type="text/html" frameborder="0" height="245" width="100%" src="http://forecast.io/embed/#lat={{ trip.location.lat }}&lon={{ trip.location.lat }}&name={{ trip.location.name }}"> </iframe>
+{% endblock %}
+
+
+{% block modal %}
+    <div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Trip Messages</h4>
+      </div>
+      <div class="modal-body">
+
+            <form method="post" action="{% url 'message_create' pk=trip.pk %}">
+            {% csrf_token %}
+                <div class="form-group">
+                <label for="messageContent">Leave A Message For the Trip</label>
+                <textarea name='content' class="form-control" id="messageContent" placeholder="Have an Extra Tent?" rows="3"></textarea>
+                <input type="hidden" name='trip' value="{{ trip.pk }}">
+                </div>
+                <input type="submit" value="Leave A Message" class="btn btn-success">
+            </form>
+        {% for message in trip.messages.all %}
+          <h5>{{ message.owner }} @ {{ message.created_at }}</h5>
+          <p>{{ message.content }}</p>
+        {% endfor %}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
 {% endblock %}

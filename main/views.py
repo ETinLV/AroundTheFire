@@ -20,7 +20,7 @@ from cloudinary import api
 
 from main.apicalls import make_address
 from main.forms import CamperCreateForm, UploadFileForm
-from main.models import Camper, Trip, Location, Photo, Review
+from main.models import Camper, Trip, Location, Photo, Review, Message
 
 
 class Home(View):
@@ -111,7 +111,7 @@ class LocationCreate(CreateView):
 class ReviewCreate(CreateView):
     model = Review
     fields = ('content',)
-    template_name = "location/create_review.html"
+
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
@@ -134,7 +134,7 @@ class ReviewCreate(CreateView):
             review.owner = self.request.user.camper
             review.save()
         return super(ReviewCreate, self).form_valid(form)
-
+#TODO THis for messages!
 
 class TripDetail(DetailView):
     model = Trip
@@ -210,6 +210,33 @@ class AcceptDecline(UpdateView):
             trip.invited.remove(camper)
         trip.save()
         return super(AcceptDecline, self).form_valid(form)
+
+class MessageCreate(CreateView):
+    model = Message
+    fields = ('content',)
+
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(MessageCreate, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(MessageCreate, self).get_context_data(**kwargs)
+        context['trip'] = Trip.objects.get(pk=self.kwargs['pk'])
+        return context
+
+    def get_success_url(self):
+        return reverse(viewname='trip_detail', kwargs={'pk': self.kwargs['pk']})
+
+    def form_valid(self, form):
+        """Make the owner of the trip the user who created it"""
+        if form.is_valid():
+            message = form.instance
+            message.content = form.cleaned_data['content']
+            message.trip = Trip.objects.get(pk=self.kwargs['pk'])
+            message.owner = self.request.user.camper
+            message.save()
+        return super(MessageCreate, self).form_valid(form)
 
 def image_upload(request, pk):
     form = UploadFileForm(request.POST)

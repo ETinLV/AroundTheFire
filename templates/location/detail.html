@@ -72,6 +72,11 @@
                 <input type="submit" value="Leave A Review" class="btn btn-success">
             </form>
 
+        {% for review in location.reviews.all %}
+          <h5>{{ review.owner }} @ {{ review.created_at }}</h5>
+          <p>{{ review.content }}</p>
+        {% endfor %}
+
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
