@@ -15,7 +15,6 @@
     {% if camper.invited.count > 0  %}
         {% for trip in camper.invited_trips %}
                 <a href="{% url 'trip_detail' trip.pk %}" class="list-group-item">
-                <i class="fa fa-globe"></i>
                 <p>{{ trip.title }}</p>
                 <p>{{ trip.location.name }}</p>
                 <p>{{ trip.start_date }} - {{ trip.end_date }}</p>
@@ -47,7 +46,6 @@
     {% if camper.upcoming_trips  %}
         {% for trip in camper.upcoming_trips %}
             <a href="{% url 'trip_detail' trip.pk %}" class="list-group-item">
-            <i class="fa fa-globe"></i>
             <p>What: {{ trip.title }}</p>
             <p>Where: {{ trip.location.name }}</p>
             <p>When: {{ trip.start_date }} - {{ trip.end_date }}</p>
@@ -75,7 +73,6 @@
     {% if camper.past_trips  %}
         {% for trip in camper.past_trips %}
             <a href="{% url 'trip_detail' trip.pk %}" class="list-group-item">
-            <i class="fa fa-globe"></i>
             <p>{{ trip.title }}</p>
             <p>{{ trip.location.name }}</p>
             <p>{{ trip.start_date }} - {{ trip.end_date }}</p>

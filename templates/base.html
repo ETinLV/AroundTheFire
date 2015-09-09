@@ -8,7 +8,9 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1, user-scalable=no"/>
     <title>Around The Fire - {% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/ol.css' %}" />
     <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap.min.css" %}"/>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" />
     <style type="text/css">
         body {
             overflow: hidden;
@@ -159,18 +161,6 @@
                 applyMargins();
             });
             $(window).on("resize", applyMargins);
-            var map = new ol.Map({
-                target: "map",
-                layers: [
-                    new ol.layer.Tile({
-                        source: new ol.source.OSM()
-                    })
-                ],
-                view: new ol.View({
-                    center: [0, 0],
-                    zoom: 2
-                })
-            });
             applyInitialUIState();
             applyMargins();
         });
