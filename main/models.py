@@ -73,6 +73,7 @@ class Location(models.Model):
     lng = models.CharField(max_length=30, null=True)
     city = models.CharField(max_length=100, null=True, blank=True)
     api_id = models.CharField(max_length=100, unique=True, null=True)
+
     def __str__(self):
         return '{}'.format(self.name)
 

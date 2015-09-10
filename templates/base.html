@@ -158,78 +158,8 @@
 </nav>
 <div class="navbar-offset"></div>
 <div id="map">
-    <script>
-        var map = null;
-        var marker = null;
-        function initMap() {
-            var defautLat = Number({% block lat %}{% endblock %});
-            var defautLng = Number({% block lng %}{% endblock %});
-            var myLatLng2 = {lat: defautLat, lng: defautLng};
-            var map = new google.maps.Map(document.getElementById('map'), {
-                zoom: {% block zoomlevel %}{% endblock %},
-                center: myLatLng2,
-                mapTypeId: google.maps.MapTypeId.TERRAIN
-            });
-
-
-            var jslocations = JSON.parse('{{ jslocations }}');
-            for (loc in jslocations) {
-                placeMarker(loc);
-
-            }
-
-// code for creating new mark and info window on map click
-            var infowindownew = new google.maps.InfoWindow(
-              {
-                size: new google.maps.Size(150,50)
-              });
-
-
-            google.maps.event.addListener(map, 'click', function (event) {
-                //call function to create marker
-                if (marker) {
-                    marker.setMap(null);
-                    marker = null;
-                }
-                marker = createMarker(event.latLng, "name", "<b>Location</b><br>" + event.latLng);
-            });
-            // A function to create the marker and set up the event window function
-            function createMarker(latlng, name, html) {
-                var contentString = html.link('location/create/'+latlng);
-                var marker = new google.maps.Marker({
-                    position: latlng,
-                    map: map,
-                    zIndex: Math.round(latlng.lat() * -100000) << 5
-                });
-
-                google.maps.event.addListener(marker, 'click', function () {
-                    infowindownew.setContent(contentString);
-                    infowindownew.open(map, marker);
-                });
-                google.maps.event.trigger(marker, 'click');
-                return marker;
-            }
-//adds markers for each location object in jslocations list
-            function placeMarker(locs) {
-                var marker = new google.maps.Marker({
-                    map: map,
-                    position: {
-                        lat: Number(jslocations[loc].fields.lat),
-                        lng: Number(jslocations[loc].fields.lng)
-                    },
-                    //icon: '/static/images/iconsets/gmap/iconb' + (loc+1) + '.png',
-                    //TODO make icons related to site information
-                });
-                var infowindow = new google.maps.InfoWindow({
-                    content: (jslocations[loc].fields.name.link('location/'+jslocations[loc].pk))
-
-                });
-                google.maps.event.addListener(marker, 'click', function () {
-                    infowindow.open(map, marker);
-                });
-            }
-        }
-    </script>
+{% block javascript %}
+{% endblock %}
 </div>
 <div class="row main-row">
     <div class="col-sm-4 col-md-3 sidebar sidebar-left pull-left">

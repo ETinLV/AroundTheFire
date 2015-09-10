@@ -1,25 +1,20 @@
 import datetime
-import json
 import cloudinary
-
 from cloudinary.forms import cl_init_js_callbacks
-from django.contrib.admin.widgets import AdminDateWidget
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, render_to_response
 from django.template import RequestContext
 from django.utils.decorators import method_decorator
-
 from django.utils.safestring import mark_safe
-from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View, CreateView, DetailView, UpdateView
-from cloudinary import api
 
 from main.apicalls import make_address
 from main.forms import CamperCreateForm, UploadFileForm
+from main.helpers import marker_set
 from main.models import Camper, Trip, Location, Photo, Review, Message
 
 
@@ -27,24 +22,34 @@ class Home(View):
     """Homepage View. Different templates depending if user is logged in or not"""
 
     def get(self, request, *arg):
-        # serialize the campsites
-        self.jslocations = serializers.serialize('json', Location.objects.all(),
-                                                 fields=(
-                                                 'lat', 'lng', 'name', 'city',
-                                                 'zip', 'pk'))
-        # if user is logged in, send to homepage
+        """if user is logged in, send to homepage"""
         if self.request.user.pk is not None:
+            """Gather all locations and seralize the data"""
+            markers = marker_set(request)
+            self.invited_markers = markers[0]
+            self.upcoming_markers = markers[1]
+            self.past_markers = markers[2]
             context = {'camper': self.request.user.camper,
                        'locations': Location.objects.select_related().all(),
-                       'jslocations': mark_safe(self.jslocations),
+                       'all_locations': serializers.serialize('json', []),
+                       'invited_locations': mark_safe(self.invited_markers),
+                       'upcoming_locations': mark_safe(self.upcoming_markers),
+                       'past_locations': mark_safe(self.past_markers),
                        }
             return render_to_response(template_name='user/home.html',
                                       context=context,
                                       context_instance=RequestContext(request))
+
         # if not logged in, send to default page
         else:
+            self.all_locations = serializers.serialize(Location.objects.all())
+            serializers.serialize('json', Location.objects.all)
             context = {'locations': Location.objects.all(),
-                       'jslocations': mark_safe(self.jslocations)}
+                       'all_locations': mark_safe(self.all_locations),
+                       'invited_locations': serializers.serialize('json', []),
+                       'upcoming_locations': serializers.serialize('json', []),
+                       'past_locations': serializers.serialize('json', [])
+                       }
             return render_to_response(template_name='default.html',
                                       context=context,
                                       context_instance=RequestContext(request))
