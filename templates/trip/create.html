@@ -1,12 +1,10 @@
 {% extends 'base.html' %}
 {% load bootstrap3 %}
+{% load staticfiles %}
 {% block title %}
     location.name
 {% endblock %}
-{#TODOL find the proper lat.lng#}
-{% block zoomlevel %}10{% endblock %}
-{% block lat %}{{ location.lat }}{% endblock %}
-{% block lng %}{{ location.lng }}{% endblock %}
+
 
 {% block pane-one-title %}
     Upcoming Trips
@@ -34,4 +32,61 @@ Nothing at all
 
 {% block pane-three %}
     <iframe id="forecast_embed" type="text/html" frameborder="0" height="245" width="100%" src="http://forecast.io/embed/#lat={{ view.kwargs.lat }}&lon={{ view.kwargs.lng }}"> </iframe>
+{% endblock %}
+
+
+{% block javascript %}
+<script>
+    var iconBase = '{% static 'icons/' %}';
+    var icons = {
+      invited: {
+        icon: iconBase + 'purplefire.png'
+      },
+      upcoming: {
+        icon: iconBase + 'redfire.png'
+      },
+      past: {
+        icon: iconBase + 'blackfire.png'
+      },
+      home: {
+          icon: iconBase + 'home.png'
+      },
+      campsite: {
+          icon: iconBase + 'campsite.png'
+      }
+    };
+    function initMap() {
+        var defautLat = Number({{ location.lat }});
+        var defautLng = Number({{ location.lng }});
+        var myLatLng2 = {lat: defautLat, lng: defautLng};
+        var map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 14,
+            center: myLatLng2,
+            mapTypeId: google.maps.MapTypeId.TERRAIN
+        });
+        //loop thought locations and call the marker place functions
+
+        placeMarker();
+
+        //adds markers for each trip type
+        //place a marker on the center of the map
+        function placeMarker() {
+            var marker = new google.maps.Marker({
+                map: map,
+                position: {
+                    lat: defautLat,
+                    lng: defautLng
+                },
+                icon: icons['campsite'].icon
+            });
+            {#            var infowindow = new google.maps.InfoWindow({#}
+            {#                content: (invited[0].fields.name.link('location/'+invited[0].pk))#}
+            {##}
+            {#            });#}
+            {#            google.maps.event.addListener(marker, 'click', function () {#}
+            {#                infowindow.open(map, marker);#}
+            {#            });#}
+        }
+    }
+</script>
 {% endblock %}

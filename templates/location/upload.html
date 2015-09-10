@@ -11,13 +11,9 @@
 {% cloudinary_includes %}
 {% cloudinary_js_config %}
 
-
-
-
-
 <form action="{% url 'image_upload' location.pk %}" method="post">
   {% csrf_token %}
-  {{ form.image }}
+  {{ form.as.p }}
   <input type="submit" value="Submit" />
 </form>
 

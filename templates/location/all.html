@@ -1,0 +1,255 @@
+{% extends 'base.html' %}
+{% load bootstrap3 %}
+{% load staticfiles %}
+{% block title %}
+    Home
+{% endblock %}
+
+
+
+{% block pane-one-title %}
+    Upcoming Trips
+
+{% endblock %}
+{% block pane-one %}
+    <h4>Invited To <img src="{% static 'icons/purplefire.png' %}" class="icon"></h4>
+    {% if camper.invited.count > 0  %}
+        {% for trip in camper.invited_trips %}
+                <a href="{% url 'trip_detail' trip.pk %}" class="list-group-item">
+                <p>{{ trip.title }}</p>
+                <p>{{ trip.location.name }}</p>
+                <p>{{ trip.start_date }} - {{ trip.end_date }}</p>
+
+{#                TODO: remove the inlne style tags!#}
+                <form method="post" action="{% url 'accept_decline' trip.pk %}" style="float: left; padding-right: 10px">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="attending">
+                <input type="hidden" name="trip" value="{{ trip.pk }}">
+                <input type="hidden" name="attending" value="{{ camper.pk }}">
+                <input type="submit" value="I'm Going" class="btn btn-xs btn-success">
+                </form>
+
+                <form method="post" action="{% url 'accept_decline' trip.pk %}" style="clear: right">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="declined">
+                <input type="hidden" name="trip" value="{{ trip.pk }}">
+                <input type="hidden" name="declined" value="{{ camper.pk }}">
+                <input type="submit" value="Can't Make It" class="btn btn-xs btn-danger">
+                </form>
+
+            </a>
+        {% endfor %}
+    {% else %}
+                <p>You Currently Aren't invited On Any Trips</p>
+    {% endif %}
+
+    <h4>Upcoming  <img src="{% static 'icons/redfire.png' %}" class="icon"></h4>
+    {% if camper.upcoming_trips  %}
+        {% for trip in camper.upcoming_trips %}
+            <a href="{% url 'trip_detail' trip.pk %}" class="list-group-item">
+            <p>What: {{ trip.title }}</p>
+            <p>Where: {{ trip.location.name }}</p>
+            <p>When: {{ trip.start_date }} - {{ trip.end_date }}</p>
+            <p>Created By: {{ trip.owner }}</p>
+            {% if trip.attending.all %}
+            <p>Attending: {% for person in trip.attending.all %}
+                {{ person.user.username }}</p>
+                {% endfor %}
+            {% else %}
+                <p>No One has accept yet</p>
+            {% endif %}
+            </a>
+        {% endfor %}
+    {% else%}
+
+        <p>You Have No Upcoming Trips!</p>
+    {% endif %}
+{% endblock %}
+
+{% block pane-two-title %}
+    Past Trips  <img src="{% static 'icons/blackfire.png' %}" class="icon">
+{% endblock %}
+
+{% block pane-two %}
+    {% if camper.past_trips  %}
+        {% for trip in camper.past_trips %}
+            <a href="{% url 'trip_detail' trip.pk %}" class="list-group-item">
+            <p>{{ trip.title }}</p>
+            <p>{{ trip.location.name }}</p>
+            <p>{{ trip.start_date }} - {{ trip.end_date }}</p>
+            <p>{{ trip.owner }}</p>
+            <p>{% for person in trip.attending.all %}
+                {{ person.username }}</p>
+                {% endfor %}
+            </a>
+            {% endfor %}
+    {% else%}
+        <p>You Haven't Been On Any Trips Yet!</p>
+    {% endif %}
+{% endblock %}
+
+{% block pane-three-title %}
+
+{% endblock %}
+
+{% block pane-three %}
+    <iframe id="forecast_embed" type="text/html" frameborder="0" height="245" width="100%" src="http://forecast.io/embed/#lat={{ camper.lat }}&lon={{ camper.lng }}&name={{ camper.zip }}"> </iframe>
+{% endblock %}
+
+{% block javascript %}
+<script>
+var iconBase = '{% static 'icons/' %}';
+var icons = {
+  invited: {
+    icon: iconBase + 'purplefire.png'
+  },
+  upcoming: {
+    icon: iconBase + 'redfire.png'
+  },
+  past: {
+    icon: iconBase + 'blackfire.png'
+  },
+  home: {
+    icon: iconBase + 'home.png'
+  }
+};
+function initMap() {
+    var defautLat = Number({{ user.camper.lat }});
+    var defautLng = Number({{ user.camper.lng }});
+    var myLatLng2 = {lat: defautLat, lng: defautLng};
+    var map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 10,
+        center: myLatLng2,
+        mapTypeId: google.maps.MapTypeId.TERRAIN
+    });
+    //loop thought locations and call the marker place functions
+    var all = JSON.parse('{{ all_locations }}');
+    var invited = JSON.parse('{{ invited_locations }}');
+    var upcoming = JSON.parse('{{ upcoming_locations }}');
+    var past = JSON.parse('{{ past_locations }}');
+    placeMarker();
+    for (loc in all) {
+        placeAllMarker(loc);}
+    for (loc in invited) {
+        placeInvitedMarker(loc);}
+    for (loc in upcoming) {
+        placeUpcomingMarker(loc);}
+    for (loc in past) {
+        placePastMarker(loc);}
+
+    //adds markers for each trip type
+    //place a marker on the center of the map
+    function placeMarker() {
+        var marker = new google.maps.Marker({
+            map: map,
+            position: {
+                lat: defautLat,
+                lng: defautLng
+            },
+            icon: icons['home'].icon
+        });
+{#            var infowindow = new google.maps.InfoWindow({#}
+{#                content: (invited[0].fields.name.link('location/'+invited[0].pk))#}
+{##}
+{#            });#}
+{#            google.maps.event.addListener(marker, 'click', function () {#}
+{#                infowindow.open(map, marker);#}
+{#            });#}
+    }
+    function placeAllMarker(loc) {
+        var marker = new google.maps.Marker({
+            map: map,
+            position: {
+                lat: Number(all[loc].fields.lat),
+                lng: Number(all[loc].fields.lng)
+            },
+            icon: icons['past'].icon
+        });
+        var infowindow = new google.maps.InfoWindow({
+            content: (all[loc].fields.name.link('location/'+all[loc].pk))
+
+        });
+        google.maps.event.addListener(marker, 'click', function () {
+            infowindow.open(map, marker);
+        });
+    }
+
+    function placeInvitedMarker(loc) {
+        var marker = new google.maps.Marker({
+            map: map,
+            position: {
+                lat: Number(invited[loc].fields.lat),
+                lng: Number(invited[loc].fields.lng)
+            },
+            icon: icons['invited'].icon
+        });
+        var infowindow = new google.maps.InfoWindow({
+            content: (invited[loc].fields.name.link('location/'+invited[loc].pk))
+
+        });
+        google.maps.event.addListener(marker, 'click', function () {
+            infowindow.open(map, marker);
+        });
+    }
+
+    function placeUpcomingMarker(loc) {
+        var marker = new google.maps.Marker({
+            map: map,
+            position: {
+                lat: Number(upcoming[loc].fields.lat),
+                lng: Number(upcoming[loc].fields.lng)
+            },
+            icon: icons['upcoming'].icon
+        });
+        var infowindow = new google.maps.InfoWindow({
+            content: (upcoming[loc].fields.name.link('location/'+upcoming[loc].pk))
+
+        });
+        google.maps.event.addListener(marker, 'click', function () {
+            infowindow.open(map, marker);
+        });
+    }
+
+    function placePastMarker(loc) {
+        var marker = new google.maps.Marker({
+            map: map,
+            position: {
+                lat: Number(past[loc].fields.lat),
+                lng: Number(past[loc].fields.lng)
+            },
+            icon: icons['past'].icon
+        });
+        var infowindow = new google.maps.InfoWindow({
+            content: (past[loc].fields.name.link('location/'+past[loc].pk))
+
+        });
+        google.maps.event.addListener(marker, 'click', function () {
+            infowindow.open(map, marker);
+        });
+    }
+    google.maps.event.addListener(map, 'bounds_changed', function() {
+        checkIfMarkersStillVisible();
+    });
+    function checkIfMarkersStillVisible() {
+        var tosend = {
+            coords: map.getBounds(),
+            zoom: map.getZoom()
+        };
+
+        $.ajax({
+            type: "POST",
+            url: "{% url 'get_markers' %}",
+            async: "true",
+            dataType: "json",
+            data: JSON.stringify(tosend),
+            success : function(locations) {
+
+                },
+            error : function(xhr,errmsg,err) {
+                console.log(xhr.status + ": " + xhr.responseText)
+            }
+        });
+    }
+}
+</script>
+{% endblock %}

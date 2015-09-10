@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap.min.css" %}"/>
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" />
     <link rel="stylesheet" href="{% static 'site-style.css' %}" />
+    <link rel="shortcut icon" type="image/ico" href={% static "icons/redfire.png"%}>
     <script type="text/javascript"
             src="{% static "jquery-2.1.4.min.js" %}"></script>
     <script type="text/javascript"
@@ -177,7 +178,7 @@
                     </h4>
                 </div>
                 <div id="layers" class="panel-collapse collapse in">
-                    <div class="panel-body list-group">
+                    <div class="panel-body pane-one">
 
                             {% block pane-one %}
                             {% endblock %}
@@ -198,7 +199,7 @@
                     </h4>
                 </div>
                 <div id="properties" class="panel-collapse collapse in">
-                    <div class="panel-body">
+                    <div class="panel-body pane-two">
 
                             {% block pane-two %}
                             {% endblock %}
@@ -227,7 +228,7 @@
                     </h4>
                 </div>
                 <div id="taskpane" class="panel-collapse collapse in">
-                    <div class="panel-body">
+                    <div class="panel-body weather">
                         <p>
 
                             {% block pane-three %}

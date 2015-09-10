@@ -2,7 +2,7 @@ from django.conf.urls import include, url
 from django.contrib import admin
 import main
 from main.views import TripCreate, Home, TripDetail, LocationDetail, \
-    LocationCreate, AcceptDecline, ReviewCreate, MessageCreate
+    LocationCreate, AcceptDecline, ReviewCreate, MessageCreate, AllLocations
 from django.contrib.auth import views as auth_views
 
 
@@ -22,4 +22,6 @@ urlpatterns = [
     url(r'^$', Home.as_view(), name="home"),
     url(r'^trip/update/(?P<pk>[0-9]+)/$', AcceptDecline.as_view(), name="accept_decline"),
     url(r'^location/upload/(?P<pk>[0-9]+)/$', main.views.image_upload, name="image_upload"),
+    url(r'^locations/', AllLocations.as_view(), name="locations_all"),
+    url(r'^get_markers/', main.views.get_markers, name="get_markers")
 ]

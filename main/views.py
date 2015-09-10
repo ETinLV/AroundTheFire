@@ -1,15 +1,17 @@
 import datetime
+import json
 import cloudinary
 from cloudinary.forms import cl_init_js_callbacks
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, render_to_response
 from django.template import RequestContext
 from django.utils.decorators import method_decorator
 from django.utils.safestring import mark_safe
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View, CreateView, DetailView, UpdateView
 
 from main.apicalls import make_address
@@ -42,8 +44,7 @@ class Home(View):
 
         # if not logged in, send to default page
         else:
-            self.all_locations = serializers.serialize(Location.objects.all())
-            serializers.serialize('json', Location.objects.all)
+            self.all_locations = serializers.serialize('json', Location.objects.all())
             context = {'locations': Location.objects.all(),
                        'all_locations': mark_safe(self.all_locations),
                        'invited_locations': serializers.serialize('json', []),
@@ -80,13 +81,23 @@ def create_camper(request):
                   {'form': form})
 
 
-# TODO make this class based
+class AllLocations(View):
+    def get(self, request, *arg, **kwargs):
+        self.all_locations = serializers.serialize('json', Location.objects.all())
+        context = {'locations': Location.objects.all(),
+                   'all_locations': mark_safe(self.all_locations),
+                   'invited_locations': serializers.serialize('json', []),
+                   'upcoming_locations': serializers.serialize('json', []),
+                   'past_locations': serializers.serialize('json', [])
+                   }
+        return render_to_response(template_name='location/all.html',
+                                  context=context,
+                                  context_instance=RequestContext(request))
 
 class LocationDetail(DetailView):
     """Detail view for a location"""
     model = Location
     template_name = 'location/detail.html'
-
 
     def get_context_data(self, **kwargs):
         context = super(LocationDetail, self).get_context_data(**kwargs)
@@ -255,6 +266,10 @@ def image_upload(request, pk):
             photo.location = location
             photo.url = image.url
             photo.save()
-            return HttpResponseRedirect(image.url)
-    return render_to_response('location/{}'.format(location.pk),
+            return HttpResponseRedirect('location/{}'.format(location.pk))
+    return render_to_response('location/upload.html',
                               RequestContext(request, {'form': form, 'location': location}))
+@csrf_exempt
+def get_markers(request):
+    input = json.loads(request.body.decode('utf8'))
+    return JsonResponse(serializers.serialize('json', Location.objects.all()), safe=False)

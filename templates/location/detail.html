@@ -1,12 +1,9 @@
 {% extends 'base.html' %}
 {% load bootstrap3 %}
-
+{% load staticfiles %}
 {% block title %}
     {{ location.name }}
 {% endblock %}
-{% block zoomlevel %}12{% endblock %}
-{% block lat %}{{ location.lat }}{% endblock %}
-{% block lng %}{{ location.lng }}{% endblock %}
 
 {% block pane-one-title %}
     {{ location.name }}
@@ -23,7 +20,8 @@
     {% else %}
         <p>There Are No Photos For This Location <a href="{% url 'image_upload' location.id %}">Upload One?</a></p>
     {% endif %}
-    <p><a href="{% url 'trip_create' location.id %}" class="btn btn-success">Create A Trip Here</a>
+    <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#createTripModal">Create a Trip Here</button>
+
 
 {% endblock %}
 
@@ -85,4 +83,96 @@
 
   </div>
 </div>
+    <div id="createTripModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Trip Messages</h4>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="{% url 'trip_create' location.id %}">
+        {% csrf_token %}
+        <div class="form-group"><label class="sr-only" for="id_start_date">Start date</label><input class="form-control" id="id_start_date" name="start_date" placeholder="Start date" required="required" title="" type="text" /></div>
+        <div class="form-group"><label class="sr-only" for="id_end_date">End date</label><input class="form-control" id="id_end_date" name="end_date" placeholder="End date" required="required" title="" type="text" /></div>
+        <div class="form-group"><label class="sr-only" for="id_title">Title</label><input class="form-control" id="id_title" maxlength="50" name="title" placeholder="Title" required="required" title="" type="text" /></div>
+        <div class="form-group"><label class="sr-only" for="id_description">Description</label><textarea class="form-control" cols="40" id="id_description" maxlength="500" name="description" placeholder="Description" rows="10" title="">
+        </textarea></div>
+        <div class="form-group"><label class="sr-only" for="id_max_capacity">Max capacity</label><input class="form-control" id="id_max_capacity" name="max_capacity" placeholder="Max capacity" required="required" title="" type="number" /></div>
+        <div class="form-group"><label class="sr-only" for="id_invited">Invited</label><select multiple="multiple" class="form-control" id="id_invited" name="invited" title="">
+        <option value="1">test</option>
+        <option value="2">person3</option>
+        </select></div>
+        <input type="submit" value="Create A Trip" class="btn btn-success">
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 {% endblock %}
+
+{% block javascript %}
+<script>
+    var iconBase = '{% static 'icons/' %}';
+    var icons = {
+      invited: {
+        icon: iconBase + 'purplefire.png'
+      },
+      upcoming: {
+        icon: iconBase + 'redfire.png'
+      },
+      past: {
+        icon: iconBase + 'blackfire.png'
+      },
+      home: {
+          icon: iconBase + 'home.png'
+      },
+      campsite: {
+          icon: iconBase + 'campsite.png'
+      }
+    };
+    function initMap() {
+        var defautLat = Number({{ location.lat }});
+        var defautLng = Number({{ location.lng }});
+        var myLatLng2 = {lat: defautLat, lng: defautLng};
+        var map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 14,
+            center: myLatLng2,
+            mapTypeId: google.maps.MapTypeId.TERRAIN
+        });
+        //loop thought locations and call the marker place functions
+
+        placeMarker();
+
+        //adds markers for each trip type
+        //place a marker on the center of the map
+        function placeMarker() {
+            var marker = new google.maps.Marker({
+                map: map,
+                position: {
+                    lat: defautLat,
+                    lng: defautLng
+                },
+                icon: icons['campsite'].icon
+            });
+            {#            var infowindow = new google.maps.InfoWindow({#}
+            {#                content: (invited[0].fields.name.link('location/'+invited[0].pk))#}
+            {##}
+            {#            });#}
+            {#            google.maps.event.addListener(marker, 'click', function () {#}
+            {#                infowindow.open(map, marker);#}
+            {#            });#}
+        }
+    }
+</script>
+{% endblock %}
+
+
+
