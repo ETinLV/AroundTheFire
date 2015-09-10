@@ -11,7 +11,7 @@
     Upcoming Trips
 {% endblock %}
 {% block pane-one %}
-    <h4>Invited To</h4>
+    <h4>Invited To <img src="{% static 'icons/purplefire.png' %}" class="icon"></h4>
     {% if camper.invited.count > 0  %}
         {% for trip in camper.invited_trips %}
                 <a href="{% url 'trip_detail' trip.pk %}" class="list-group-item">
@@ -33,7 +33,7 @@
                 <input type="hidden" name="action" value="declined">
                 <input type="hidden" name="trip" value="{{ trip.pk }}">
                 <input type="hidden" name="declined" value="{{ camper.pk }}">
-                <input type="submit" value="Can't Make It" class="btn btn-xs btn-success">
+                <input type="submit" value="Can't Make It" class="btn btn-xs btn-danger">
                 </form>
 
             </a>
@@ -42,7 +42,7 @@
                 <p>You Currently Aren't invited On Any Trips</p>
     {% endif %}
 
-    <h4>Upcoming:</h4>
+    <h4>Upcoming  <img src="{% static 'icons/redfire.png' %}" class="icon"></h4>
     {% if camper.upcoming_trips  %}
         {% for trip in camper.upcoming_trips %}
             <a href="{% url 'trip_detail' trip.pk %}" class="list-group-item">
@@ -66,7 +66,7 @@
 {% endblock %}
 
 {% block pane-two-title %}
-    Past Trips
+    Past Trips  <img src="{% static 'icons/blackfire.png' %}" class="icon">
 {% endblock %}
 
 {% block pane-two %}
@@ -97,8 +97,6 @@
 
 {% block javascript %}
 <script>
-    var map = null;
-    var marker = null;
     var iconBase = '{% static 'icons/' %}';
     var icons = {
       invited: {
@@ -109,6 +107,9 @@
       },
       past: {
         icon: iconBase + 'blackfire.png'
+      },
+      home: {
+        icon: iconBase + 'home.png'
       }
     };
     function initMap() {
@@ -120,50 +121,36 @@
             center: myLatLng2,
             mapTypeId: google.maps.MapTypeId.TERRAIN
         });
-
-
-        var all_locations = JSON.parse('{{ all_locations }}');
+        //loop thought locations and call the marker place functions
         var invited = JSON.parse('{{ invited_locations }}');
         var upcoming = JSON.parse('{{ upcoming_locations }}');
         var past = JSON.parse('{{ past_locations }}');
-        for (loc in all_locations) {
-            placeMarker(loc);
-
-        }
-
+        placeMarker();
         for (loc in invited) {
-            placeInvitedMarker(loc);
-
-        }
-
+            placeInvitedMarker(loc);}
         for (loc in upcoming) {
-            placeUpcomingMarker(loc);
-
-        }
-
+            placeUpcomingMarker(loc);}
         for (loc in past) {
-            placePastMarker(loc);
+            placePastMarker(loc);}
 
-        }
-
-//adds markers for each location object in jslocations list
-
-        function placeMarker(loc) {
+        //adds markers for each trip type
+        //place a marker on the center of the map
+        function placeMarker() {
             var marker = new google.maps.Marker({
                 map: map,
                 position: {
-                    lat: Number(all_locations[loc].fields.lat),
-                    lng: Number(all_locations[loc].fields.lng)
+                    lat: defautLat,
+                    lng: defautLng
                 },
-                icon: icons['upcoming'].icon
+                icon: icons['home'].icon
             });
-            var infowindow = new google.maps.InfoWindow({
-                content: (all_locations[loc].fields.name.link('location/'+all_locations[loc].pk))
-
-            });
-            google.maps.event.addListener(marker, 'click', function () {
-                infowindow.open(map, marker);
-            });
+{#            var infowindow = new google.maps.InfoWindow({#}
+{#                content: (invited[0].fields.name.link('location/'+invited[0].pk))#}
+{##}
+{#            });#}
+{#            google.maps.event.addListener(marker, 'click', function () {#}
+{#                infowindow.open(map, marker);#}
+{#            });#}
         }
 
         function placeInvitedMarker(loc) {
@@ -218,38 +205,6 @@
             google.maps.event.addListener(marker, 'click', function () {
                 infowindow.open(map, marker);
             });
-        }
-
-// code for creating new mark and info window on map click
-        var infowindownew = new google.maps.InfoWindow(
-          {
-            size: new google.maps.Size(150,50)
-          });
-
-
-        google.maps.event.addListener(map, 'click', function (event) {
-            //call function to create marker
-            if (marker) {
-                marker.setMap(null);
-                marker = null;
-            }
-            marker = createMarker(event.latLng, "name", "<b>Location</b><br>" + event.latLng);
-        });
-        // A function to create the marker and set up the event window function
-        function createMarker(latlng, name, html) {
-            var contentString = html.link('location/create/'+latlng);
-            var marker = new google.maps.Marker({
-                position: latlng,
-                map: map,
-                zIndex: Math.round(latlng.lat() * -100000) << 5
-            });
-
-            google.maps.event.addListener(marker, 'click', function () {
-                infowindownew.setContent(contentString);
-                infowindownew.open(map, marker);
-            });
-            google.maps.event.trigger(marker, 'click');
-            return marker;
         }
     }
 </script>

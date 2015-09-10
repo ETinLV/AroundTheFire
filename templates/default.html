@@ -6,3 +6,163 @@
 {% block zoomlevel %}10{% endblock %}
 {% block lat %}36.255015{% endblock %}
 {% block lng %}-114.313795{% endblock %}
+
+
+
+<script>
+    var map = null;
+    var marker = null;
+    var iconBase = '{% static 'icons/' %}';
+    var icons = {
+      invited: {
+        icon: iconBase + 'purplefire.png'
+      },
+      upcoming: {
+        icon: iconBase + 'redfire.png'
+      },
+      past: {
+        icon: iconBase + 'blackfire.png'
+      }
+    };
+    function initMap() {
+        var defautLat = Number({{ camper.lat }});
+        var defautLng = Number({{ camper.lng }});
+        var myLatLng2 = {lat: defautLat, lng: defautLng};
+        var map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 10,
+            center: myLatLng2,
+            mapTypeId: google.maps.MapTypeId.TERRAIN
+        });
+
+
+        var all_locations = JSON.parse('{{ all_locations }}');
+        var invited = JSON.parse('{{ invited_locations }}');
+        var upcoming = JSON.parse('{{ upcoming_locations }}');
+        var past = JSON.parse('{{ past_locations }}');
+        for (loc in all_locations) {
+            placeMarker(loc);
+
+        }
+
+        for (loc in invited) {
+            placeInvitedMarker(loc);
+
+        }
+
+        for (loc in upcoming) {
+            placeUpcomingMarker(loc);
+
+        }
+
+        for (loc in past) {
+            placePastMarker(loc);
+
+        }
+
+//adds markers for each location object in jslocations list
+
+        function placeMarker(loc) {
+            var marker = new google.maps.Marker({
+                map: map,
+                position: {
+                    lat: Number(all_locations[loc].fields.lat),
+                    lng: Number(all_locations[loc].fields.lng)
+                },
+                icon: icons['upcoming'].icon
+            });
+            var infowindow = new google.maps.InfoWindow({
+                content: (all_locations[loc].fields.name.link('location/'+all_locations[loc].pk))
+
+            });
+            google.maps.event.addListener(marker, 'click', function () {
+                infowindow.open(map, marker);
+            });
+        }
+
+        function placeInvitedMarker(loc) {
+            var marker = new google.maps.Marker({
+                map: map,
+                position: {
+                    lat: Number(invited[loc].fields.lat),
+                    lng: Number(invited[loc].fields.lng)
+                },
+                icon: icons['invited'].icon
+            });
+            var infowindow = new google.maps.InfoWindow({
+                content: (invited[loc].fields.name.link('location/'+invited[loc].pk))
+
+            });
+            google.maps.event.addListener(marker, 'click', function () {
+                infowindow.open(map, marker);
+            });
+        }
+
+        function placeUpcomingMarker(loc) {
+            var marker = new google.maps.Marker({
+                map: map,
+                position: {
+                    lat: Number(upcoming[loc].fields.lat),
+                    lng: Number(upcoming[loc].fields.lng)
+                },
+                icon: icons['upcoming'].icon
+            });
+            var infowindow = new google.maps.InfoWindow({
+                content: (upcoming[loc].fields.name.link('location/'+upcoming[loc].pk))
+
+            });
+            google.maps.event.addListener(marker, 'click', function () {
+                infowindow.open(map, marker);
+            });
+        }
+
+        function placePastMarker(loc) {
+            var marker = new google.maps.Marker({
+                map: map,
+                position: {
+                    lat: Number(past[loc].fields.lat),
+                    lng: Number(past[loc].fields.lng)
+                },
+                icon: icons['past'].icon
+            });
+            var infowindow = new google.maps.InfoWindow({
+                content: (past[loc].fields.name.link('location/'+past[loc].pk))
+
+            });
+            google.maps.event.addListener(marker, 'click', function () {
+                infowindow.open(map, marker);
+            });
+        }
+
+// code for creating new mark and info window on map click
+        var infowindownew = new google.maps.InfoWindow(
+          {
+            size: new google.maps.Size(150,50)
+          });
+
+
+        google.maps.event.addListener(map, 'click', function (event) {
+            //call function to create marker
+            if (marker) {
+                marker.setMap(null);
+                marker = null;
+            }
+            marker = createMarker(event.latLng, "name", "<b>Location</b><br>" + event.latLng);
+        });
+        // A function to create the marker and set up the event window function
+        function createMarker(latlng, name, html) {
+            var contentString = html.link('location/create/'+latlng);
+            var marker = new google.maps.Marker({
+                position: latlng,
+                map: map,
+                zIndex: Math.round(latlng.lat() * -100000) << 5
+            });
+
+            google.maps.event.addListener(marker, 'click', function () {
+                infowindownew.setContent(contentString);
+                infowindownew.open(map, marker);
+            });
+            google.maps.event.trigger(marker, 'click');
+            return marker;
+        }
+    }
+</script>
