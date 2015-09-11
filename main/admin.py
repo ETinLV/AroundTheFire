@@ -18,7 +18,7 @@ class LocationAdmin(admin.ModelAdmin):
 
 @admin.register(Photo)
 class PhotoAdmin(admin.ModelAdmin):
-    list_display = ('image','url','location')
+    list_display = ('url','location')
 
 @admin.register(Review)
 class ReviewAdmin(admin.ModelAdmin):

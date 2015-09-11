@@ -1,14 +1,10 @@
 import datetime
-from itertools import chain
 import json
-import re
-import cloudinary
-from cloudinary.forms import cl_init_js_callbacks
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, render_to_response
 from django.template import RequestContext
 from django.utils.decorators import method_decorator
@@ -17,9 +13,9 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View, CreateView, DetailView, UpdateView
 
 from main.apicalls import make_address
-from main.forms import CamperCreateForm, UploadFileForm
+from main.forms import CamperCreateForm
 from main.helpers import marker_set
-from main.models import Camper, Trip, Location, Photo, Review, Message
+from main.models import Camper, Trip, Location, Review, Message
 
 
 class Home(View):
@@ -298,5 +294,5 @@ def get_markers(request):
 @csrf_exempt
 def image_upload(request, pk):
     data = json.loads(request.body.decode('utf8'))
-    #TODO make this respond with the success url code
+    # TODO make this respond with the success url code
     return JsonResponse(None, safe=False)

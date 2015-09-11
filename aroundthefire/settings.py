@@ -37,7 +37,6 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'cloudinary',
     'bootstrap3',
     'main',
 
@@ -89,7 +88,7 @@ WSGI_APPLICATION = 'aroundthefire.wsgi.application'
 #         'PORT': '',
 #     }
 # }
-"""mysql"""
+# # """mysql"""
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',

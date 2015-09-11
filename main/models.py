@@ -1,7 +1,6 @@
 import datetime
 from itertools import chain
 from operator import attrgetter
-from cloudinary.models import CloudinaryField
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import Model
@@ -14,7 +13,7 @@ a location lat and long in the JS on the template would not work."""
 class Camper(models.Model):
     """Model for site user. aka Campers"""
     user = models.OneToOneField(User, null=True)
-    friends = models.ManyToManyField('self')
+    friends = models.ManyToManyField('self', blank=True)
     zip = models.CharField(max_length=10, null=True, blank=True)
     lat = models.FloatField(max_length=30, null=True)
     lng = models.FloatField(max_length=30, null=True)
@@ -79,7 +78,6 @@ class Location(models.Model):
 
 
 class Photo(models.Model):
-    image = CloudinaryField('image', null=True)
     location = models.ForeignKey(Location, null=True, blank=True, related_name='photos')
     trip = models.ForeignKey(Trip, null=True,blank=True, related_name='photos')
     url = models.URLField(null=True)
