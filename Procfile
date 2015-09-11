@@ -1,1 +1,1 @@
-web: gunicorn Aroundthefire.wsgi --log-file -
+web: gunicorn aroundthefire.wsgi --log-file -
