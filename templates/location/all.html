@@ -167,8 +167,12 @@ function initMap() {
     });
     function checkIfMarkersStillVisible() {
         coords =  map.getBounds();
-        coordsDict = {"ne": coords.getNorthEast().toString(),
-            'sw': coords.getSouthWest().toString()};
+        zoom = map.getZoom();
+        coordsDict = {"n": coords.getNorthEast().lat().toString(),
+            'e': coords.getNorthEast().lng().toString(),
+            's': coords.getSouthWest().lat().toString(),
+            'w': coords.getSouthWest().lng().toString(),
+            'zoom': zoom.toString()};
 
         $.ajax({
             url: "{% url 'get_markers' %}",

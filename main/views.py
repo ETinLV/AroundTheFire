@@ -46,7 +46,8 @@ class Home(View):
 
         # if not logged in, send to default page
         else:
-            self.all_locations = serializers.serialize('json', Location.objects.all())
+            self.all_locations = serializers.serialize('json',
+                                                       Location.objects.all())
             context = {'locations': Location.objects.all(),
                        'all_locations': mark_safe(self.all_locations),
                        'invited_locations': serializers.serialize('json', []),
@@ -85,7 +86,8 @@ def create_camper(request):
 
 class AllLocations(View):
     def get(self, request, *arg, **kwargs):
-        self.all_locations = serializers.serialize('json', Location.objects.all())
+        self.all_locations = serializers.serialize('json',
+                                                   Location.objects.all())
         context = {'locations': Location.objects.all(),
                    'all_locations': mark_safe(self.all_locations),
                    'invited_locations': serializers.serialize('json', []),
@@ -95,6 +97,7 @@ class AllLocations(View):
         return render_to_response(template_name='location/all.html',
                                   context=context,
                                   context_instance=RequestContext(request))
+
 
 class LocationDetail(DetailView):
     """Detail view for a location"""
@@ -108,6 +111,7 @@ class LocationDetail(DetailView):
         except:
             context['photos'] = None
         return context
+
 
 class LocationCreate(CreateView):
     model = Location
@@ -126,10 +130,10 @@ class LocationCreate(CreateView):
                      lng=form.data['lng'])
         return super(LocationCreate, self).form_valid(form)
 
+
 class ReviewCreate(CreateView):
     model = Review
     fields = ('content',)
-
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
@@ -141,7 +145,8 @@ class ReviewCreate(CreateView):
         return context
 
     def get_success_url(self):
-        return reverse(viewname='location_detail', kwargs={'pk': self.kwargs['pk']})
+        return reverse(viewname='location_detail',
+                       kwargs={'pk': self.kwargs['pk']})
 
     def form_valid(self, form):
         """Make the owner of the trip the user who created it"""
@@ -152,7 +157,9 @@ class ReviewCreate(CreateView):
             review.owner = self.request.user.camper
             review.save()
         return super(ReviewCreate, self).form_valid(form)
-#TODO THis for messages!
+
+
+# TODO THis for messages!
 
 class TripDetail(DetailView):
     model = Trip
@@ -182,7 +189,8 @@ class TripDetail(DetailView):
 class TripCreate(CreateView):
     model = Trip
     fields = (
-    'start_date', 'end_date', 'title', 'description', 'max_capacity', 'invited')
+        'start_date', 'end_date', 'title', 'description', 'max_capacity',
+        'invited')
     template_name = "trip/create.html"
 
     @method_decorator(login_required)
@@ -229,10 +237,10 @@ class AcceptDecline(UpdateView):
         trip.save()
         return super(AcceptDecline, self).form_valid(form)
 
+
 class MessageCreate(CreateView):
     model = Message
     fields = ('content',)
-
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
@@ -256,41 +264,39 @@ class MessageCreate(CreateView):
             message.save()
         return super(MessageCreate, self).form_valid(form)
 
-def image_upload(request, pk):
-    form = UploadFileForm(request.POST)
-    cloudinary.forms.cl_init_js_callbacks(form, request)
-    location = Location.objects.get(pk=pk)
-    if request.method == 'POST':
-        if form.is_valid():
-            photo = Photo.objects.create(image=form.cleaned_data['image'])
-            image = form.cleaned_data['image']
-            photo.image = image
-            photo.location = location
-            photo.url = image.url
-            photo.save()
-            return HttpResponseRedirect('location/{}'.format(location.pk))
-    return render_to_response('location/upload.html',
-                              RequestContext(request, {'form': form, 'location': location}))
+
+# def image_upload(request, pk):
+#     form = UploadFileForm(request.POST)
+#     cloudinary.forms.cl_init_js_callbacks(form, request)
+#     location = Location.objects.get(pk=pk)
+#     if request.method == 'POST':
+#         if form.is_valid():
+#             photo = Photo.objects.create(image=form.cleaned_data['image'])
+#             image = form.cleaned_data['image']
+#             photo.image = image
+#             photo.location = location
+#             photo.url = image.url
+#             photo.save()
+#             return HttpResponseRedirect('location/{}'.format(location.pk))
+#     return render_to_response('location/upload.html',
+#                               RequestContext(request, {'form': form, 'location': location}))
 
 def get_markers(request):
-    query_string = request.GET
-    bounds_dict = create_bound_box(query_string)
-    locations = Location.objects.filter(
-        lat__lte=bounds_dict['north'],
-        lat__gte=bounds_dict['south'],
-        lng__lte=bounds_dict['east'],
-        lng__gte=bounds_dict['west'])
-    locations = serializers.serialize('json', locations)
-    return JsonResponse(locations, safe=False)
+    query_string = request.GET.dict()
+    if int(query_string['zoom']) >= 7:
+        locations = Location.objects.filter(
+            lat__lte=float(query_string['n']),
+            lat__gte=float(query_string['s']),
+            lng__lte=float(query_string['e']),
+            lng__gte=float(query_string['w']))
+        locations = serializers.serialize('json', locations)
+        return JsonResponse(locations, safe=False)
+    else:
+        return JsonResponse(None, safe=False)
 
 
-def create_bound_box(query_string):
-    re_north = re.search('\(([\-0-9\.]+)[,\s]+([\-0-9\.]+)\)', query_string['ne'])
-    re_south = re.search('\(([\-0-9\.]+)[,\s]+([\-0-9\.]+)\)', query_string['sw'])
-    bounds_dict = {
-        'north': float(re_north.group(1)),
-        'south': float(re_south.group(1)),
-        'east': float(re_north.group(2)),
-        'west': float(re_south.group(2))
-    }
-    return bounds_dict
+@csrf_exempt
+def image_upload(request, pk):
+    data = json.loads(request.body.decode('utf8'))
+    #TODO make this respond with the success url code
+    return JsonResponse(None, safe=False)
