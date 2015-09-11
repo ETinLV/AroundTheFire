@@ -118,26 +118,13 @@ function initMap() {
     var defautLat = Number({{ user.camper.lat }});
     var defautLng = Number({{ user.camper.lng }});
     var myLatLng2 = {lat: defautLat, lng: defautLng};
+    var all;
     map = new google.maps.Map(document.getElementById('map'), {
         zoom: 10,
         center: myLatLng2,
         mapTypeId: google.maps.MapTypeId.TERRAIN
     });
-    //loop thought locations and call the marker place functions
-    var all = JSON.parse('{{ all_locations }}');
-    var invited = JSON.parse('{{ invited_locations }}');
-    var upcoming = JSON.parse('{{ upcoming_locations }}');
-    var past = JSON.parse('{{ past_locations }}');
     placeMarker();
-    for (loc in all) {
-        placeAllMarker(loc);}
-    for (loc in invited) {
-        placeInvitedMarker(loc);}
-    for (loc in upcoming) {
-        placeUpcomingMarker(loc);}
-    for (loc in past) {
-        placePastMarker(loc);}
-
     //adds markers for each trip type
     //place a marker on the center of the map
     function placeMarker() {
@@ -175,59 +162,6 @@ function initMap() {
         });
     }
 
-    function placeInvitedMarker(loc) {
-        var marker = new google.maps.Marker({
-            map: map,
-            position: {
-                lat: Number(invited[loc].fields.lat),
-                lng: Number(invited[loc].fields.lng)
-            },
-            icon: icons['invited'].icon
-        });
-        var infowindow = new google.maps.InfoWindow({
-            content: (invited[loc].fields.name.link('location/'+invited[loc].pk))
-
-        });
-        google.maps.event.addListener(marker, 'click', function () {
-            infowindow.open(map, marker);
-        });
-    }
-
-    function placeUpcomingMarker(loc) {
-        var marker = new google.maps.Marker({
-            map: map,
-            position: {
-                lat: Number(upcoming[loc].fields.lat),
-                lng: Number(upcoming[loc].fields.lng)
-            },
-            icon: icons['upcoming'].icon
-        });
-        var infowindow = new google.maps.InfoWindow({
-            content: (upcoming[loc].fields.name.link('location/'+upcoming[loc].pk))
-
-        });
-        google.maps.event.addListener(marker, 'click', function () {
-            infowindow.open(map, marker);
-        });
-    }
-
-    function placePastMarker(loc) {
-        var marker = new google.maps.Marker({
-            map: map,
-            position: {
-                lat: Number(past[loc].fields.lat),
-                lng: Number(past[loc].fields.lng)
-            },
-            icon: icons['past'].icon
-        });
-        var infowindow = new google.maps.InfoWindow({
-            content: (past[loc].fields.name.link('location/'+past[loc].pk))
-
-        });
-        google.maps.event.addListener(marker, 'click', function () {
-            infowindow.open(map, marker);
-        });
-    }
     google.maps.event.addListener(map, 'idle', function() {
         checkIfMarkersStillVisible();
     });
@@ -241,8 +175,12 @@ function initMap() {
             dataType: "json",
             data: coordsDict,
             success : function(locations) {
-                console.log(locations);
+                //loop thought locations and call the marker place functions
+                all = JSON.parse(locations);
+                for (loc in all) {
+                    placeAllMarker(loc);}
                 },
+
             error : function(xhr,errmsg,err) {
                 console.log(xhr.status + ": " + xhr.responseText)
             }

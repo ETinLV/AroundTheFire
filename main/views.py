@@ -1,4 +1,5 @@
 import datetime
+from itertools import chain
 import json
 import re
 import cloudinary
@@ -7,7 +8,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 from django.shortcuts import render, render_to_response
 from django.template import RequestContext
 from django.utils.decorators import method_decorator
@@ -279,8 +280,9 @@ def get_markers(request):
         lat__gte=bounds_dict['south'],
         lng__lte=bounds_dict['east'],
         lng__gte=bounds_dict['west'])
-    a ='b'
-    return JsonResponse(serializers.serialize('json', locations, safe=False))
+    locations = serializers.serialize('json', locations)
+    return JsonResponse(locations, safe=False)
+
 
 def create_bound_box(query_string):
     re_north = re.search('\(([\-0-9\.]+)[,\s]+([\-0-9\.]+)\)', query_string['ne'])
