@@ -16,8 +16,8 @@ class Camper(models.Model):
     user = models.OneToOneField(User, null=True)
     friends = models.ManyToManyField('self')
     zip = models.CharField(max_length=10, null=True, blank=True)
-    lat = models.CharField(max_length=30, null=True)
-    lng = models.CharField(max_length=30, null=True)
+    lat = models.FloatField(max_length=30, null=True)
+    lng = models.FloatField(max_length=30, null=True)
     city = models.CharField(max_length=100, null=True, blank=True)
 
     def __str__(self):
@@ -69,8 +69,8 @@ class Location(models.Model):
     """Model for campsites"""
     name = models.CharField(max_length=200, null=True)
     zip = models.CharField(max_length=10, null=True, blank=True)
-    lat = models.CharField(max_length=30, null=True)
-    lng = models.CharField(max_length=30, null=True)
+    lat = models.FloatField(max_length=30, null=True)
+    lng = models.FloatField(max_length=30, null=True)
     city = models.CharField(max_length=100, null=True, blank=True)
     api_id = models.CharField(max_length=100, unique=True, null=True)
 

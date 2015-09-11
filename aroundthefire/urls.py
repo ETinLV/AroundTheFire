@@ -8,7 +8,7 @@ from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     url(r'^logout', auth_views.logout, {'next_page': '/'},  name='logout'),
-    url(r'^login', auth_views.login, {'template_name': 'user/login.html', 'extra_context': {'next': '/'}}, name='login'),
+    url(r'^login', auth_views.login, {'extra_context': {'next': '/'}}, name='login'),
     url(r'^trip/accept_decline/(?P<pk>[0-9]+)/$', AcceptDecline.as_view(), name="accept_decline"),
     url(r'^trip/create/(?P<pk>[0-9]+)/$', TripCreate.as_view(), name="trip_create"),
     url(r'^trip/(?P<pk>[0-9]+)/$', TripDetail.as_view(), name="trip_detail"),

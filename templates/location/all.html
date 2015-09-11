@@ -113,11 +113,12 @@ var icons = {
     icon: iconBase + 'home.png'
   }
 };
+var map;
 function initMap() {
     var defautLat = Number({{ user.camper.lat }});
     var defautLng = Number({{ user.camper.lng }});
     var myLatLng2 = {lat: defautLat, lng: defautLng};
-    var map = new google.maps.Map(document.getElementById('map'), {
+    map = new google.maps.Map(document.getElementById('map'), {
         zoom: 10,
         center: myLatLng2,
         mapTypeId: google.maps.MapTypeId.TERRAIN
@@ -227,23 +228,20 @@ function initMap() {
             infowindow.open(map, marker);
         });
     }
-    google.maps.event.addListener(map, 'bounds_changed', function() {
+    google.maps.event.addListener(map, 'idle', function() {
         checkIfMarkersStillVisible();
     });
     function checkIfMarkersStillVisible() {
-        var tosend = {
-            coords: map.getBounds(),
-            zoom: map.getZoom()
-        };
+        coords =  map.getBounds();
+        coordsDict = {"ne": coords.getNorthEast().toString(),
+            'sw': coords.getSouthWest().toString()};
 
         $.ajax({
-            type: "POST",
             url: "{% url 'get_markers' %}",
-            async: "true",
             dataType: "json",
-            data: JSON.stringify(tosend),
+            data: coordsDict,
             success : function(locations) {
-
+                console.log(locations);
                 },
             error : function(xhr,errmsg,err) {
                 console.log(xhr.status + ": " + xhr.responseText)

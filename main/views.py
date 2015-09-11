@@ -1,5 +1,6 @@
 import datetime
 import json
+import re
 import cloudinary
 from cloudinary.forms import cl_init_js_callbacks
 from django.contrib.auth import authenticate, login
@@ -269,7 +270,25 @@ def image_upload(request, pk):
             return HttpResponseRedirect('location/{}'.format(location.pk))
     return render_to_response('location/upload.html',
                               RequestContext(request, {'form': form, 'location': location}))
-@csrf_exempt
+
 def get_markers(request):
-    input = json.loads(request.body.decode('utf8'))
-    return JsonResponse(serializers.serialize('json', Location.objects.all()), safe=False)
+    query_string = request.GET
+    bounds_dict = create_bound_box(query_string)
+    locations = Location.objects.filter(
+        lat__lte=bounds_dict['north'],
+        lat__gte=bounds_dict['south'],
+        lng__lte=bounds_dict['east'],
+        lng__gte=bounds_dict['west'])
+    a ='b'
+    return JsonResponse(serializers.serialize('json', locations, safe=False))
+
+def create_bound_box(query_string):
+    re_north = re.search('\(([\-0-9\.]+)[,\s]+([\-0-9\.]+)\)', query_string['ne'])
+    re_south = re.search('\(([\-0-9\.]+)[,\s]+([\-0-9\.]+)\)', query_string['sw'])
+    bounds_dict = {
+        'north': float(re_north.group(1)),
+        'south': float(re_south.group(1)),
+        'east': float(re_north.group(2)),
+        'west': float(re_south.group(2))
+    }
+    return bounds_dict
