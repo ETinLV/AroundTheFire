@@ -20,7 +20,7 @@
                 <p>{{ trip.location.name }}</p>
                 <p>{{ trip.start_date }} - {{ trip.end_date }}</p>
 
-{#                TODO: remove the inlne style tags!#}
+
                 <form method="post" action="{% url 'accept_decline' trip.pk %}" style="float: left; padding-right: 10px">
                 {% csrf_token %}
                 <input type="hidden" name="action" value="attending">

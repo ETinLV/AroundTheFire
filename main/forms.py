@@ -9,10 +9,9 @@ class CamperCreateForm(UserCreationForm):
     """Form for Registering new Campers"""
     zip = forms.CharField(max_length=10, required=True)
     email = forms.EmailField(required=True)
-
     class Meta:
         model = User
-        fields = ('username', 'email')
+        fields = ('username', 'email', 'first_name', 'last_name')
 
 
 class TripCreateForm(ModelForm):

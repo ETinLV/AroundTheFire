@@ -1,168 +1,157 @@
 {% extends 'base.html' %}
 {% load bootstrap3 %}
+{% load static %}
 {% block title %}
     The Place for Camping
 {% endblock %}
-{% block zoomlevel %}10{% endblock %}
-{% block lat %}36.255015{% endblock %}
-{% block lng %}-114.313795{% endblock %}
+{% block pane-one %}
+<li><a href='' data-toggle="modal" data-target="#registerModal">Login</a></li>
+{% endblock %}
+
+{% block javascript %}
+<script>
+var iconBase = '{% static 'img/' %}';
+var icons = {
+  invited: {
+    icon: iconBase + 'purplefire.png'
+  },
+  upcoming: {
+    icon: iconBase + 'redfire.png'
+  },
+  past: {
+    icon: iconBase + 'blackfire.png'
+  },
+  home: {
+    icon: iconBase + 'home.png'
+  }
+};
+var map;
+function initMap() {
+    var defautLat = Number(36.1);
+    var defautLng = Number(-115.15);
+    var myLatLng2 = {lat: defautLat, lng: defautLng};
+    var all;
+    map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 8,
+        center: myLatLng2,
+        mapTypeId: google.maps.MapTypeId.TERRAIN
+    });
+    placeMarker();
+    //adds markers for each trip type
+    //place a marker on the center of the map
+    function placeMarker() {
+        var marker = new google.maps.Marker({
+            map: map,
+            position: {
+                lat: defautLat,
+                lng: defautLng
+            },
+            icon: icons['home'].icon
+        });
+{#            var infowindow = new google.maps.InfoWindow({#}
+{#                content: (invited[0].fields.name.link('location/'+invited[0].pk))#}
+{##}
+{#            });#}
+{#            google.maps.event.addListener(marker, 'click', function () {#}
+{#                infowindow.open(map, marker);#}
+{#            });#}
+    }
+    function placeAllMarker(loc) {
+        var marker = new google.maps.Marker({
+            map: map,
+            position: {
+                lat: Number(all[loc].fields.lat),
+                lng: Number(all[loc].fields.lng)
+            },
+            icon: icons['past'].icon
+        });
+        var infowindow = new google.maps.InfoWindow({
+            content: (all[loc].fields.name.link('../location/'+all[loc].pk))
+
+        });
+        google.maps.event.addListener(marker, 'click', function () {
+            infowindow.open(map, marker);
+        });
+    }
+
+    google.maps.event.addListener(map, 'idle', function() {
+        checkIfMarkersStillVisible();
+    });
+    function checkIfMarkersStillVisible() {
+        coords =  map.getBounds();
+        zoom = map.getZoom();
+        coordsDict = {"n": coords.getNorthEast().lat().toString(),
+            'e': coords.getNorthEast().lng().toString(),
+            's': coords.getSouthWest().lat().toString(),
+            'w': coords.getSouthWest().lng().toString(),
+            'zoom': zoom.toString()};
+
+        $.ajax({
+            url: "{% url 'get_markers' %}",
+            dataType: "json",
+            data: coordsDict,
+            success : function(locations) {
+                //loop thought locations and call the marker place functions
+                all = JSON.parse(locations);
+                for (loc in all) {
+                    placeAllMarker(loc);}
+                },
+
+            error : function(xhr,errmsg,err) {
+                console.log(xhr.status + ": " + xhr.responseText)
+            }
+        });
+    }
+}
+</script>
+{% endblock %}
+
+{% block modal %}
+<div class="container">
+
+  <!-- Modal -->
+  <div class="modal fade" id="registerModal" role="dialog">
+    <div class="modal-dialog">
+
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 style="color:red; "><span class="glyphicon glyphicon-lock"></span> Register</h4>
+        </div>
+        <div class="modal-body">
 
 
-{##}
-{#<script>#}
-{#    var map = null;#}
-{#    var marker = null;#}
-{#    var iconBase = '{% static 'img/' %}';#}
-{#    var img = {#}
-{#      invited: {#}
-{#        icon: iconBase + 'purplefire.png'#}
-{#      },#}
-{#      upcoming: {#}
-{#        icon: iconBase + 'redfire.png'#}
-{#      },#}
-{#      past: {#}
-{#        icon: iconBase + 'blackfire.png'#}
-{#      }#}
-{#    };#}
-{#    function initMap() {#}
-{#        var defautLat = Number({{ camper.lat }});#}
-{#        var defautLng = Number({{ camper.lng }});#}
-{#        var myLatLng2 = {lat: defautLat, lng: defautLng};#}
-{#        var map = new google.maps.Map(document.getElementById('map'), {#}
-{#            zoom: 10,#}
-{#            center: myLatLng2,#}
-{#            mapTypeId: google.maps.MapTypeId.TERRAIN#}
-{#        });#}
-{##}
-{##}
-{#        var all_locations = JSON.parse('{{ all_locations }}');#}
-{#        var invited = JSON.parse('{{ invited_locations }}');#}
-{#        var upcoming = JSON.parse('{{ upcoming_locations }}');#}
-{#        var past = JSON.parse('{{ past_locations }}');#}
-{#        for (loc in all_locations) {#}
-{#            placeMarker(loc);#}
-{##}
-{#        }#}
-{##}
-{#        for (loc in invited) {#}
-{#            placeInvitedMarker(loc);#}
-{##}
-{#        }#}
-{##}
-{#        for (loc in upcoming) {#}
-{#            placeUpcomingMarker(loc);#}
-{##}
-{#        }#}
-{##}
-{#        for (loc in past) {#}
-{#            placePastMarker(loc);#}
-{##}
-{#        }#}
-{##}
-{#//adds markers for each location object in jslocations list#}
-{##}
-{#        function placeMarker(loc) {#}
-{#            var marker = new google.maps.Marker({#}
-{#                map: map,#}
-{#                position: {#}
-{#                    lat: Number(all_locations[loc].fields.lat),#}
-{#                    lng: Number(all_locations[loc].fields.lng)#}
-{#                },#}
-{#                icon: img['upcoming'].icon#}
-{#            });#}
-{#            var infowindow = new google.maps.InfoWindow({#}
-{#                content: (all_locations[loc].fields.name.link('location/'+all_locations[loc].pk))#}
-{##}
-{#            });#}
-{#            google.maps.event.addListener(marker, 'click', function () {#}
-{#                infowindow.open(map, marker);#}
-{#            });#}
-{#        }#}
-{##}
-{#        function placeInvitedMarker(loc) {#}
-{#            var marker = new google.maps.Marker({#}
-{#                map: map,#}
-{#                position: {#}
-{#                    lat: Number(invited[loc].fields.lat),#}
-{#                    lng: Number(invited[loc].fields.lng)#}
-{#                },#}
-{#                icon: img['invited'].icon#}
-{#            });#}
-{#            var infowindow = new google.maps.InfoWindow({#}
-{#                content: (invited[loc].fields.name.link('location/'+invited[loc].pk))#}
-{##}
-{#            });#}
-{#            google.maps.event.addListener(marker, 'click', function () {#}
-{#                infowindow.open(map, marker);#}
-{#            });#}
-{#        }#}
-{##}
-{#        function placeUpcomingMarker(loc) {#}
-{#            var marker = new google.maps.Marker({#}
-{#                map: map,#}
-{#                position: {#}
-{#                    lat: Number(upcoming[loc].fields.lat),#}
-{#                    lng: Number(upcoming[loc].fields.lng)#}
-{#                },#}
-{#                icon: img['upcoming'].icon#}
-{#            });#}
-{#            var infowindow = new google.maps.InfoWindow({#}
-{#                content: (upcoming[loc].fields.name.link('location/'+upcoming[loc].pk))#}
-{##}
-{#            });#}
-{#            google.maps.event.addListener(marker, 'click', function () {#}
-{#                infowindow.open(map, marker);#}
-{#            });#}
-{#        }#}
-{##}
-{#        function placePastMarker(loc) {#}
-{#            var marker = new google.maps.Marker({#}
-{#                map: map,#}
-{#                position: {#}
-{#                    lat: Number(past[loc].fields.lat),#}
-{#                    lng: Number(past[loc].fields.lng)#}
-{#                },#}
-{#                icon: img['past'].icon#}
-{#            });#}
-{#            var infowindow = new google.maps.InfoWindow({#}
-{#                content: (past[loc].fields.name.link('location/'+past[loc].pk))#}
-{##}
-{#            });#}
-{#            google.maps.event.addListener(marker, 'click', function () {#}
-{#                infowindow.open(map, marker);#}
-{#            });#}
-{#        }#}
-{##}
-{#// code for creating new mark and info window on map click#}
-{#        var infowindownew = new google.maps.InfoWindow(#}
-{#          {#}
-{#            size: new google.maps.Size(150,50)#}
-{#          });#}
-{##}
-{##}
-{#        google.maps.event.addListener(map, 'click', function (event) {#}
-{#            //call function to create marker#}
-{#            if (marker) {#}
-{#                marker.setMap(null);#}
-{#                marker = null;#}
-{#            }#}
-{#            marker = createMarker(event.latLng, "name", "<b>Location</b><br>" + event.latLng);#}
-{#        });#}
-{#        // A function to create the marker and set up the event window function#}
-{#        function createMarker(latlng, name, html) {#}
-{#            var contentString = html.link('location/create/'+latlng);#}
-{#            var marker = new google.maps.Marker({#}
-{#                position: latlng,#}
-{#                map: map,#}
-{#                zIndex: Math.round(latlng.lat() * -100000) << 5#}
-{#            });#}
-{##}
-{#            google.maps.event.addListener(marker, 'click', function () {#}
-{#                infowindownew.setContent(contentString);#}
-{#                infowindownew.open(map, marker);#}
-{#            });#}
-{#            google.maps.event.trigger(marker, 'click');#}
-{#            return marker;#}
-{#        }#}
-{#    }#}
-{#</script>#}
+            <form action="{% url 'register' %}" method = 'POST'>
+                {% csrf_token %}
+                <input type="hidden" name="next" value="/">
+                <div class="form-group"><label class="sr-only" for="id_username">Username</label><input class="form-control" id="id_username" maxlength="254" name="username" placeholder="Username" required="required" title="" type="text" /></div>
+                <div class="form-group"><label class="sr-only" for="id_first_name">First Name</label><input class="form-control" id="id_first_name" maxlength="30" name="first_name" placeholder="First Name" required="required" title="" type="text" /></div>
+                <div class="form-group"><label class="sr-only" for="id_last_name">Last Name</label><input class="form-control" id="id_last_name" maxlength="30" name="last_name" placeholder="Last Name" required="required" title="" type="text" /></div>
+
+                <div class="form-group"><label class="sr-only" for="id_email">email</label><input class="form-control" id="id_email" maxlength="254" name="email" placeholder="email" required="required" title="" type="emmail" /></div>
+                <div class="form-group"><label class="sr-only" for="id_zip">Username</label><input class="form-control" id="id_zip" maxlength="10" name="zip" placeholder="ZipCode" required="required" title="" type="number" /></div>
+                <div class="form-group"><label class="sr-only" for="id_password">Password</label><input class="form-control" id="id_password" name="password1" placeholder="Password" required="required" title="" type="password" /></div>
+                <div class="form-group"><label class="sr-only" for="id_password">Password</label><input class="form-control" id="id_password" name="password2" placeholder="Password" required="required" title="" type="password" /></div>
+
+
+                <input type = 'submit' value="Register" class="btn btn-danger"/>
+            </form>
+
+            <div class="checkbox">
+              <label><input type="checkbox" value="" checked>Remember me</label>
+            </div>
+            <button type="submit" class="btn btn-default btn-success btn-block"><span class="glyphicon glyphicon-off"></span> Login</button>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-default btn-default pull-left" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
+          <p>Not a member? <a href="{% url 'register' %}">Sign Up</a></p>
+          <p>Forgot <a href="#">Password?</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
