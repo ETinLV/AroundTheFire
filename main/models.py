@@ -80,6 +80,7 @@ class Location(models.Model):
 class Photo(models.Model):
     location = models.ForeignKey(Location, null=True, blank=True, related_name='photos')
     trip = models.ForeignKey(Trip, null=True,blank=True, related_name='photos')
+    thumbnail = models.URLField(null=True)
     url = models.URLField(null=True)
 
 class Message(models.Model):

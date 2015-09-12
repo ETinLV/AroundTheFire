@@ -4,18 +4,17 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 from django.shortcuts import render, render_to_response
 from django.template import RequestContext
 from django.utils.decorators import method_decorator
 from django.utils.safestring import mark_safe
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View, CreateView, DetailView, UpdateView
-
 from main.apicalls import make_address
 from main.forms import CamperCreateForm
 from main.helpers import marker_set
-from main.models import Camper, Trip, Location, Review, Message
+from main.models import Camper, Trip, Location, Review, Message, Photo
 
 
 class Home(View):
@@ -23,18 +22,18 @@ class Home(View):
 
     def get(self, request, *arg):
         """if user is logged in, send to homepage"""
-        if self.request.user.pk is not None:
+        if request.user.pk is not None:
             """Gather all locations and seralize the data"""
             markers = marker_set(request)
-            self.invited_markers = markers[0]
-            self.upcoming_markers = markers[1]
-            self.past_markers = markers[2]
-            context = {'camper': self.request.user.camper,
+            invited_markers = markers[0]
+            upcoming_markers = markers[1]
+            past_markers = markers[2]
+            context = {'camper': request.user.camper,
                        'locations': Location.objects.select_related().all(),
                        'all_locations': serializers.serialize('json', []),
-                       'invited_locations': mark_safe(self.invited_markers),
-                       'upcoming_locations': mark_safe(self.upcoming_markers),
-                       'past_locations': mark_safe(self.past_markers),
+                       'invited_locations': mark_safe(invited_markers),
+                       'upcoming_locations': mark_safe(upcoming_markers),
+                       'past_locations': mark_safe(past_markers),
                        }
             return render_to_response(template_name='user/home.html',
                                       context=context,
@@ -155,21 +154,14 @@ class ReviewCreate(CreateView):
         return super(ReviewCreate, self).form_valid(form)
 
 
-# TODO THis for messages!
-
 class TripDetail(DetailView):
     model = Trip
     template_name = 'trip/detail.html'
 
     def get_context_data(self, **kwargs):
         """
-        Add extra content to determine if the trip is over or not
-        :param kwargs:
-        :return:
-        """
-        """
-        :param kwargs:
-        :return:
+        Add extra content to determine if the trip is over or not and pass
+        pictures to the view
         """
         context = super(TripDetail, self).get_context_data(**kwargs)
         if datetime.datetime.now().year <= self.object.end_date.year and \
@@ -178,7 +170,7 @@ class TripDetail(DetailView):
             context['upcoming'] = True
         else:
             context['upcoming'] = False
-        # TODO There HAS to be a better way than this....
+        context['photos'] = self.object.photos.all()
         return context
 
 
@@ -261,22 +253,6 @@ class MessageCreate(CreateView):
         return super(MessageCreate, self).form_valid(form)
 
 
-# def image_upload(request, pk):
-#     form = UploadFileForm(request.POST)
-#     cloudinary.forms.cl_init_js_callbacks(form, request)
-#     location = Location.objects.get(pk=pk)
-#     if request.method == 'POST':
-#         if form.is_valid():
-#             photo = Photo.objects.create(image=form.cleaned_data['image'])
-#             image = form.cleaned_data['image']
-#             photo.image = image
-#             photo.location = location
-#             photo.url = image.url
-#             photo.save()
-#             return HttpResponseRedirect('location/{}'.format(location.pk))
-#     return render_to_response('location/upload.html',
-#                               RequestContext(request, {'form': form, 'location': location}))
-
 def get_markers(request):
     query_string = request.GET.dict()
     if int(query_string['zoom']) >= 7:
@@ -288,11 +264,32 @@ def get_markers(request):
         locations = serializers.serialize('json', locations)
         return JsonResponse(locations, safe=False)
     else:
-        return JsonResponse(None, safe=False)
+        return HttpResponse(status=204)
 
 
 @csrf_exempt
 def image_upload(request, pk):
     data = json.loads(request.body.decode('utf8'))
-    # TODO make this respond with the success url code
-    return JsonResponse(None, safe=False)
+    if data['sites']:
+        if data['type'] == 'location':
+            location = Location.objects.get(pk=pk)
+            for picture in data['sites']:
+                photo = Photo.objects.create(
+                    location=location,
+                    thumbnail=picture['thumbnail'],
+                    url = picture['url'])
+                photo.save()
+            return HttpResponse(status=201)
+        if data['type'] == 'trip':
+            trip = Trip.objects.get(pk=pk)
+            for picture in data['sites']:
+                photo = Photo.objects.create(
+                    trip=trip,
+                    thumbnail=picture['thumbnail'],
+                    url = picture['url'])
+                photo.save()
+            return HttpResponse(status=201)
+        else:
+            return HttpResponse(status=400)
+    else:
+        return HttpResponse(status=204)

@@ -57,14 +57,14 @@ def call_trail_api(lat='0', lng='0', radius=180, limit=100):
 
 def api_create_locations(lat=None, lng=None):
     """adds locations from the trail api to the location database"""
-    for object in call_trail_api(lat=lat, lng=lng)[
-        'places']:
-        location = Location.objects.create(lat=object['lat'], lng=object['lon'])
+    for object in call_trail_api(lat=lat, lng=lng)['places']:
+        location = Location.objects.get_or_create(api_id=object['unique_id'])[0]
+        location.lat = object['lat']
+        location.lng = object['lon']
         make_address(location, lat=location.lat, lng=location.lng)
         for image in object['activities']:
             if image['thumbnail']:
-                Photo.objects.create(url=image['thumbnail'], location=location)
-        location.api_id = object['unique_id']
+                Photo.objects.create(thumbnail=image['thumbnail'], url=image['thumbnail'], location=location)
         location.name = object['name']
         location.save()
 

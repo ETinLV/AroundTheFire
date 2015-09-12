@@ -23,7 +23,6 @@ urlpatterns = [
     url(r'^$', Home.as_view(), name="home"),
     url(r'^trip/update/(?P<pk>[0-9]+)/$', AcceptDecline.as_view(), name="accept_decline"),
     url(r'^location/upload/(?P<pk>[0-9]+)/$', main.views.image_upload, name="image_upload"),
-    url(r'^locations/', AllLocations.as_view(), name="locations_all"),
+    url(r'^locations/$', AllLocations.as_view(), name="locations_all"),
     url(r'^get_markers/', main.views.get_markers, name="get_markers"),
-    url(r'^test', TemplateView.as_view(template_name='test.html'), name="test"),
 ]

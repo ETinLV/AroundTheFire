@@ -85,7 +85,11 @@ body {
     border-radius: 4px;
     cursor: pointer;
 }
+img.thumbnails{
+    height: 108px;
+    padding: 0 3px 35px 3px;
+}
 
-/*.navbar-default .navbar-brand {*/
-    /*color: darkred;*/
-/*}*/
+.location-city{
+    text-align: center;
+}

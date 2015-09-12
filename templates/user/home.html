@@ -11,7 +11,7 @@
     Upcoming Trips
 {% endblock %}
 {% block pane-one %}
-    <h4>Invited To <img src="{% static 'icons/purplefire.png' %}" class="icon"></h4>
+    <h4>Invited To <img src="{% static 'img/purplefire.png' %}" class="icon"></h4>
     {% if camper.invited.count > 0  %}
         {% for trip in camper.invited_trips %}
                 <a href="{% url 'trip_detail' trip.pk %}" class="list-group-item">
@@ -42,7 +42,7 @@
                 <p>You Currently Aren't invited On Any Trips</p>
     {% endif %}
 
-    <h4>Upcoming  <img src="{% static 'icons/redfire.png' %}" class="icon"></h4>
+    <h4>Upcoming  <img src="{% static 'img/redfire.png' %}" class="icon"></h4>
     {% if camper.upcoming_trips  %}
         {% for trip in camper.upcoming_trips %}
             <a href="{% url 'trip_detail' trip.pk %}" class="list-group-item">
@@ -66,7 +66,7 @@
 {% endblock %}
 
 {% block pane-two-title %}
-    Past Trips  <img src="{% static 'icons/blackfire.png' %}" class="icon">
+    Past Trips  <img src="{% static 'img/blackfire.png' %}" class="icon">
 {% endblock %}
 
 {% block pane-two %}
@@ -97,7 +97,7 @@
 
 {% block javascript %}
 <script>
-    var iconBase = '{% static 'icons/' %}';
+    var iconBase = '{% static 'img/' %}';
     var icons = {
       invited: {
         icon: iconBase + 'purplefire.png'

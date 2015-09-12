@@ -12,8 +12,8 @@
 {#<script>#}
 {#    var map = null;#}
 {#    var marker = null;#}
-{#    var iconBase = '{% static 'icons/' %}';#}
-{#    var icons = {#}
+{#    var iconBase = '{% static 'img/' %}';#}
+{#    var img = {#}
 {#      invited: {#}
 {#        icon: iconBase + 'purplefire.png'#}
 {#      },#}
@@ -68,7 +68,7 @@
 {#                    lat: Number(all_locations[loc].fields.lat),#}
 {#                    lng: Number(all_locations[loc].fields.lng)#}
 {#                },#}
-{#                icon: icons['upcoming'].icon#}
+{#                icon: img['upcoming'].icon#}
 {#            });#}
 {#            var infowindow = new google.maps.InfoWindow({#}
 {#                content: (all_locations[loc].fields.name.link('location/'+all_locations[loc].pk))#}
@@ -86,7 +86,7 @@
 {#                    lat: Number(invited[loc].fields.lat),#}
 {#                    lng: Number(invited[loc].fields.lng)#}
 {#                },#}
-{#                icon: icons['invited'].icon#}
+{#                icon: img['invited'].icon#}
 {#            });#}
 {#            var infowindow = new google.maps.InfoWindow({#}
 {#                content: (invited[loc].fields.name.link('location/'+invited[loc].pk))#}
@@ -104,7 +104,7 @@
 {#                    lat: Number(upcoming[loc].fields.lat),#}
 {#                    lng: Number(upcoming[loc].fields.lng)#}
 {#                },#}
-{#                icon: icons['upcoming'].icon#}
+{#                icon: img['upcoming'].icon#}
 {#            });#}
 {#            var infowindow = new google.maps.InfoWindow({#}
 {#                content: (upcoming[loc].fields.name.link('location/'+upcoming[loc].pk))#}
@@ -122,7 +122,7 @@
 {#                    lat: Number(past[loc].fields.lat),#}
 {#                    lng: Number(past[loc].fields.lng)#}
 {#                },#}
-{#                icon: icons['past'].icon#}
+{#                icon: img['past'].icon#}
 {#            });#}
 {#            var infowindow = new google.maps.InfoWindow({#}
 {#                content: (past[loc].fields.name.link('location/'+past[loc].pk))#}
