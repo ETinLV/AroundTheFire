@@ -86,10 +86,15 @@ body {
     cursor: pointer;
 }
 img.thumbnails{
-    height: 108px;
+    height: 100px;
+    width: 104px;
     padding: 0 3px 35px 3px;
 }
 
 .location-city{
+    text-align: center;
+}
+
+.trip-create{
     text-align: center;
 }

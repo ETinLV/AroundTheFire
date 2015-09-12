@@ -43,11 +43,8 @@ class Home(View):
         else:
             self.all_locations = serializers.serialize('json',
                                                        Location.objects.all())
-            context = {'locations': Location.objects.all(),
-                       'all_locations': mark_safe(self.all_locations),
-                       'invited_locations': serializers.serialize('json', []),
-                       'upcoming_locations': serializers.serialize('json', []),
-                       'past_locations': serializers.serialize('json', [])
+            context = {'photos': Photo.objects.all()[:19],
+                       'reviews': Review.objects.all()[:9]
                        }
             return render_to_response(template_name='default.html',
                                       context=context,
@@ -277,7 +274,7 @@ def image_upload(request, pk):
                 photo = Photo.objects.create(
                     location=location,
                     thumbnail=picture['thumbnail'],
-                    url = picture['url'])
+                    url=picture['url'])
                 photo.save()
             return HttpResponse(status=201)
         if data['type'] == 'trip':
@@ -286,7 +283,7 @@ def image_upload(request, pk):
                 photo = Photo.objects.create(
                     trip=trip,
                     thumbnail=picture['thumbnail'],
-                    url = picture['url'])
+                    url=picture['url'])
                 photo.save()
             return HttpResponse(status=201)
         else:

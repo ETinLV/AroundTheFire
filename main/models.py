@@ -82,6 +82,10 @@ class Photo(models.Model):
     trip = models.ForeignKey(Trip, null=True,blank=True, related_name='photos')
     thumbnail = models.URLField(null=True)
     url = models.URLField(null=True)
+    created_at = models.DateTimeField(default=datetime.datetime.now())
+
+    class Meta:
+        ordering = ["-created_at"]
 
 class Message(models.Model):
     owner = models.ForeignKey(Camper, null=True, blank=True, related_name='messages')
