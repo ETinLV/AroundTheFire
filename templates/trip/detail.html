@@ -53,32 +53,37 @@
 {% block pane-one %}
     <div class="list-group-item">
         <a href="{% url 'location_detail' trip.location.pk %}">
-
             <h4>{{ trip.title }}</h4>
             <h5>{{ trip.location.name }}</h5>
         </a>
+            <h5>Maximum Number Of Campers:  {{ trip.max_capacity }}</h5>
         <p>{{ trip.start_date }}-{{ trip.end_date }}</p>
         <p>{{ trip.description }}</p>
-    {% for person in trip.attending.all %}
-        <p>Campers = {{ person.user.username }}</p>
+    Invited:
+        {% for person in trip.invited.all %}
+            <p>{{ person.user.username }},</p>
+        {% endfor %}
+    Attending:
+        {% for person in trip.attending.all %}
+        <p>{{ person.user.username }},</p>
     {% endfor %}
 
-    {% if upcoming and trip.attending.count <= trip.max_capacity and user.camper in trip.invited.all %}
-    <form method="post" action="{% url 'accept_decline' trip.pk %}" style="float: left">
-    {% csrf_token %}
-    <input type="hidden" name="action" value="attending">
-    <input type="hidden" name="trip" value="{{ trip.pk }}">
-    <input type="hidden" name="attending" value="{{ camper.pk }}">
-    <input type="submit" value="I'm Going" class="btn btn-xs btn-success">
-    </form>
+        {% if upcoming and trip.attending.count <= trip.max_capacity and user.camper in trip.invited.all %}
+        <form method="post" action="{% url 'accept_decline' trip.pk %}" style="float: left">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="attending">
+        <input type="hidden" name="trip" value="{{ trip.pk }}">
+        <input type="hidden" name="attending" value="{{ camper.pk }}">
+        <input type="submit" value="I'm Going" class="btn btn-xs btn-success">
+        </form>
 
-    <form method="post" action="{% url 'accept_decline' trip.pk %}" style="clear: right">
-    {% csrf_token %}
-    <input type="hidden" name="action" value="declined">
-    <input type="hidden" name="trip" value="{{ trip.pk }}">
-    <input type="hidden" name="declined" value="{{ camper.pk }}">
-    <input type="submit" value="Can't Make It" class="btn btn-xs btn-success">
-    </form>
+        <form method="post" action="{% url 'accept_decline' trip.pk %}" style="clear: right">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="declined">
+        <input type="hidden" name="trip" value="{{ trip.pk }}">
+        <input type="hidden" name="declined" value="{{ camper.pk }}">
+        <input type="submit" value="Can't Make It" class="btn btn-xs btn-success">
+        </form>
 
     {% elif upcoming and trip.attending.count >= trip.max_capacity and user.camper in trip.invited.all %}
         <p>This Trip Is Full</p>
@@ -126,7 +131,7 @@
 {% endblock %}
 
 {% block pane-two-title %}
-
+Trip Messages
 {% endblock %}
 
 {% block pane-two %}

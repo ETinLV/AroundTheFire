@@ -135,3 +135,6 @@ BOOTSTRAP3 = {
     'include_jquery': True,
 }
 
+EMAIL_BACKEND = "sgbackend.SendGridBackend"
+SENDGRID_USER = os.environ['SENDGRID_USERNAME']
+SENDGRID_PASSWORD = os.environ['SENDGRID_PASS']

@@ -1,5 +1,6 @@
 from django.core import serializers
-
+from django.core.mail import send_mail
+from django.core.mail import EmailMultiAlternatives
 
 def marker_set(request):
         invited = set()
@@ -30,3 +31,23 @@ def marker_set(request):
                                                  'lat', 'lng', 'name', 'city',
                                                  'zip', 'pk',))
         return (invited, upcoming, past)
+
+
+
+def send_mail(request):
+    send_mail("You've been invited on a trip", "This is a test of email",
+      "Around The Fire <ericturnernv@gmail.com>", ["ericturnernv@gmail.com"])
+    success = True
+    return success
+
+# # or
+# mail = EmailMultiAlternatives(
+#   subject="Your Subject",
+#   body="This is a simple text email body.",
+#   from_email="Yamil Asusta <hello@yamilasusta.com>",
+#   to=["yamil@sendgrid.com"],
+#   headers={"Reply-To": "support@sendgrid.com"}
+# )
+# mail.attach_alternative("<p>This is a simple HTML email body</p>", "text/html")
+#
+#     mail.send()

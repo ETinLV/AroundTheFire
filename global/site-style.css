@@ -98,3 +98,8 @@ img.thumbnails{
 .trip-create{
     text-align: center;
 }
+
+@media (min-width: 992px) {}
+.col-md-3 {
+    width: 28%;
+}

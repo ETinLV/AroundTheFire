@@ -111,6 +111,9 @@ var icons = {
   },
   home: {
     icon: iconBase + 'home.png'
+  },
+  campsite: {
+    icon: iconBase + 'campsite.png'
   }
 };
 var map;
@@ -151,7 +154,7 @@ function initMap() {
                 lat: Number(all[loc].fields.lat),
                 lng: Number(all[loc].fields.lng)
             },
-            icon: icons['past'].icon
+            icon: icons['campsite'].icon
         });
         var infowindow = new google.maps.InfoWindow({
             content: (all[loc].fields.name.link('../location/'+all[loc].pk))

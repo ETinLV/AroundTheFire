@@ -69,6 +69,9 @@
 
 {% endblock %}
 
+{% block pane-three %}
+    <iframe id="forecast_embed" type="text/html" frameborder="0" height="245" width="100%" src="http://forecast.io/embed/#lat=36.1&lon=-115.15&name=Las Vegas"> </iframe>
+{% endblock %}
 
 {% block javascript %}
 <script>
@@ -85,6 +88,9 @@ var icons = {
   },
   home: {
     icon: iconBase + 'home.png'
+  },
+  campsite: {
+      icon: iconBase + 'campsite.png'
   }
 };
 var map;
@@ -98,26 +104,8 @@ function initMap() {
         center: myLatLng2,
         mapTypeId: google.maps.MapTypeId.TERRAIN
     });
-    placeMarker();
     //adds markers for each trip type
     //place a marker on the center of the map
-    function placeMarker() {
-        var marker = new google.maps.Marker({
-            map: map,
-            position: {
-                lat: defautLat,
-                lng: defautLng
-            },
-            icon: icons['home'].icon
-        });
-{#            var infowindow = new google.maps.InfoWindow({#}
-{#                content: (invited[0].fields.name.link('location/'+invited[0].pk))#}
-{##}
-{#            });#}
-{#            google.maps.event.addListener(marker, 'click', function () {#}
-{#                infowindow.open(map, marker);#}
-{#            });#}
-    }
     function placeAllMarker(loc) {
         var marker = new google.maps.Marker({
             map: map,
@@ -125,7 +113,7 @@ function initMap() {
                 lat: Number(all[loc].fields.lat),
                 lng: Number(all[loc].fields.lng)
             },
-            icon: icons['past'].icon
+            icon: icons['campsite'].icon
         });
         var infowindow = new google.maps.InfoWindow({
             content: (all[loc].fields.name.link('../location/'+all[loc].pk))
@@ -207,7 +195,6 @@ function initMap() {
               <label><input type="checkbox" value="" checked>Remember me</label>
             </div>
             <button type="submit" class="btn btn-default btn-success btn-block"><span class="glyphicon glyphicon-off"></span> Login</button>
-          </form>
         </div>
         <div class="modal-footer">
           <button type="submit" class="btn btn-default btn-default pull-left" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
