@@ -107,11 +107,11 @@ you will be able to create a new site.</h5>
                 marker = null;
             }
             if (map.zoom < 14) {
-                map.setZoom(map.zoom + 1);
+                map.setZoom(map.zoom + 2);
                 map.setCenter(event.latLng);
                 map.setMapTypeId(google.maps.MapTypeId.TERRAIN)
             } else if (map.zoom < 19) {
-                map.setZoom(map.zoom + 1);
+                map.setZoom(map.zoom + 2);
                 map.setCenter(event.latLng);
                 map.setMapTypeId(google.maps.MapTypeId.SATELLITE);
             } else {
