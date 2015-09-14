@@ -13,7 +13,6 @@ a location lat and long in the JS on the template would not work."""
 class Camper(models.Model):
     """Model for site user. aka Campers"""
     user = models.OneToOneField(User, null=True)
-    friends = models.ManyToManyField('self', blank=True)
     zip = models.CharField(max_length=10, null=True, blank=True)
     lat = models.FloatField(max_length=30, null=True)
     lng = models.FloatField(max_length=30, null=True)
@@ -57,7 +56,7 @@ class Trip(models.Model):
     declined = models.ManyToManyField(Camper, related_name='declined',
                                       blank=True)
     unregistered_user = models.ManyToManyField(UnregisteredUser,
-                                               related_name='invited')
+                                               related_name='invited', blank=True)
     start_date = models.DateField(blank=False, null=True)
     end_date = models.DateField(blank=False, null=True)
     location = models.ForeignKey('Location', related_name='location',
