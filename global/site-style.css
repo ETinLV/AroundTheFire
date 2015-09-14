@@ -14,6 +14,7 @@ body {
     right: 0px;
 }
 
+
 .pane-one {
     overflow: auto;
     max-height: 30pc;
@@ -102,4 +103,8 @@ img.thumbnails{
 @media (min-width: 992px) {}
 .col-md-3 {
     width: 28%;
+}
+
+.hidden{
+    display: none;
 }

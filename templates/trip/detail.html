@@ -300,6 +300,18 @@ Trip Messages
           map.setCenter(center);
         });
     }
+
+    $(function () {
+     $('#pane-one').removeClass('hidden');
+     });
+    $(function () {
+         $('#pane-two').removeClass('hidden');
+     });
+    {% if upcoming %}
+        $(function () {
+             $('#pane-three').removeClass('hidden');
+     });
+    {% endif %}
 </script>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <script src="//blueimp.github.io/Gallery/js/jquery.blueimp-gallery.min.js"></script>

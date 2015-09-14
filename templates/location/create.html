@@ -9,7 +9,8 @@
     Share A New Campsite
 {% endblock %}
 {% block pane-one %}
-    <h4>Campsite Details</h4>
+<h5>Click the map to zoom to your campsite location. When you have zoomed in all the way,
+you will be able to create a new site.</h5>
 {% endblock %}
 
 
@@ -17,8 +18,7 @@
 {% endblock %}
 
 {% block pane-two %}
-    <p>When creating a trip, please be as accurate as possible. try zooming in
-    as far as your can!</p>
+
 {% endblock %}
 
 {% block pane-three-title %}
@@ -212,5 +212,9 @@
               map.setCenter(center);
             });
     }
+
+    $(function () {
+     $('#pane-one').removeClass('hidden');
+     });
 </script>
 {% endblock %}
