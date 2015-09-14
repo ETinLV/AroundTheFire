@@ -124,7 +124,7 @@
         }
           console.log(JSON.stringify(imgResult));
            $.post(
-               'http://localhost:8000/location/upload/' + '{{ trip.pk }}' + '/',
+               '/location/upload/' + '{{ trip.pk }}' + '/',
                JSON.stringify(imgResult),
                function() { $('#results').html("DONE") }
  );
