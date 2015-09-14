@@ -87,14 +87,17 @@ def create_camper(request):
 
 
 class AllLocations(View):
-    def get(self, request, *arg, **kwargs):
-        self.all_locations = serializers.serialize('json',
-                                                   Location.objects.all())
-        context = {'locations': Location.objects.all(),
-                   'all_locations': mark_safe(self.all_locations),
-                   'invited_locations': serializers.serialize('json', []),
-                   'upcoming_locations': serializers.serialize('json', []),
-                   'past_locations': serializers.serialize('json', [])
+    def get(self, request, *arg):
+        markers = marker_set(request)
+        invited_markers = markers[0]
+        upcoming_markers = markers[1]
+        past_markers = markers[2]
+        context = {'camper': request.user.camper,
+                   'locations': Location.objects.select_related().all(),
+                   'all_locations': serializers.serialize('json', []),
+                   'invited_locations': mark_safe(invited_markers),
+                   'upcoming_locations': mark_safe(upcoming_markers),
+                   'past_locations': mark_safe(past_markers),
                    }
         return render_to_response(template_name='location/all.html',
                                   context=context,

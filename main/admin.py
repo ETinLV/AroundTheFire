@@ -7,7 +7,7 @@ from main.models import Trip, Location, Camper, Photo, Review, Message, \
 
 @admin.register(Camper)
 class CamperAdmin(admin.ModelAdmin):
-    list_display = ('user', 'zip')
+    list_display = ('user', 'zip',)
 
 @admin.register(Trip)
 class TripAdmin(admin.ModelAdmin):
