@@ -43,6 +43,11 @@ class Camper(models.Model):
             key=attrgetter('end_date')))
 
 
+class UnregisteredUser(models.Model):
+    first_name = models.CharField(max_length=50, null=True)
+    email = models.EmailField()
+
+
 class Trip(models.Model):
     """Model for trips created by campers"""
     owner = models.ForeignKey(Camper, related_name="created", null=True)
@@ -51,6 +56,8 @@ class Trip(models.Model):
                                        blank=True)
     declined = models.ManyToManyField(Camper, related_name='declined',
                                       blank=True)
+    unregistered_user = models.ManyToManyField(UnregisteredUser,
+                                               related_name='invited')
     start_date = models.DateField(blank=False, null=True)
     end_date = models.DateField(blank=False, null=True)
     location = models.ForeignKey('Location', related_name='location',
@@ -78,8 +85,9 @@ class Location(models.Model):
 
 
 class Photo(models.Model):
-    location = models.ForeignKey(Location, null=True, blank=True, related_name='photos')
-    trip = models.ForeignKey(Trip, null=True,blank=True, related_name='photos')
+    location = models.ForeignKey(Location, null=True, blank=True,
+                                 related_name='photos')
+    trip = models.ForeignKey(Trip, null=True, blank=True, related_name='photos')
     thumbnail = models.URLField(null=True)
     url = models.URLField(null=True)
     created_at = models.DateTimeField(default=datetime.datetime.now())
@@ -87,20 +95,27 @@ class Photo(models.Model):
     class Meta:
         ordering = ["-created_at"]
 
+
 class Message(models.Model):
-    owner = models.ForeignKey(Camper, null=True, blank=True, related_name='messages')
-    trip = models.ForeignKey(Trip, null=True, blank=True, related_name='messages')
+    owner = models.ForeignKey(Camper, null=True, blank=True,
+                              related_name='messages')
+    trip = models.ForeignKey(Trip, null=True, blank=True,
+                             related_name='messages')
     content = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(default=datetime.datetime.now())
 
     class Meta:
         ordering = ["-created_at"]
+
 
 class Review(models.Model):
-    owner = models.ForeignKey(Camper, null=True, blank=True, related_name='reviews')
-    location = models.ForeignKey(Location, null=True, blank=True, related_name='reviews')
+    owner = models.ForeignKey(Camper, null=True, blank=True,
+                              related_name='reviews')
+    location = models.ForeignKey(Location, null=True, blank=True,
+                                 related_name='reviews')
     content = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(default=datetime.datetime.now())
 
     class Meta:
         ordering = ["-created_at"]
+

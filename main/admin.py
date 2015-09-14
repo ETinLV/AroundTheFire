@@ -1,7 +1,8 @@
 from django.contrib import admin
 
 # Register your models here.
-from main.models import Trip, Location, Camper, Photo, Review, Message
+from main.models import Trip, Location, Camper, Photo, Review, Message, \
+    UnregisteredUser
 
 
 @admin.register(Camper)
@@ -27,3 +28,7 @@ class ReviewAdmin(admin.ModelAdmin):
 @admin.register(Message)
 class MessageAdmin(admin.ModelAdmin):
     list_display = ('trip', 'owner')
+
+@admin.register(UnregisteredUser)
+class UnregisteredUserAdmin(admin.ModelAdmin):
+    list_display = ('first_name', 'email')

@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
-from django.shortcuts import render, render_to_response
+from django.shortcuts import render, render_to_response, redirect
 from django.template import RequestContext
 from django.utils.decorators import method_decorator
 from django.utils.safestring import mark_safe
@@ -13,8 +13,9 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View, CreateView, DetailView, UpdateView
 from main.apicalls import make_address
 from main.forms import CamperCreateForm
-from main.helpers import marker_set
-from main.models import Camper, Trip, Location, Review, Message, Photo
+from main.helpers import marker_set, get_or_send_email
+from main.models import Camper, Trip, Location, Review, Message, Photo, \
+    UnregisteredUser
 
 
 class Home(View):
@@ -63,6 +64,15 @@ def create_camper(request):
             make_address(camper, zip=data['zip'])
             camper.user = user
             camper.save()
+            try:
+                unregistered_user = UnregisteredUser.objects.get(
+                    email=data['email'])
+                for trip in unregistered_user.invited.all():
+                    trip.invited.add(camper)
+                    trip.save()
+                unregistered_user.delete()
+            except:
+                pass
             user = authenticate(username=request.POST['username'],
                                 password=request.POST['password1'])
             login(request, user)
@@ -174,8 +184,7 @@ class TripDetail(DetailView):
 class TripCreate(CreateView):
     model = Trip
     fields = (
-        'start_date', 'end_date', 'title', 'description', 'max_capacity',
-        'invited')
+        'start_date', 'end_date', 'title', 'description', 'max_capacity',)
     template_name = "trip/create.html"
 
     @method_decorator(login_required)
@@ -290,3 +299,15 @@ def image_upload(request, pk):
             return HttpResponse(status=400)
     else:
         return HttpResponse(status=204)
+
+def invite(request):
+    form = request.POST
+    form = form.dict()
+    trip = Trip.objects.get(pk=form['trip'])
+    if form['type'] == 'email':
+        get_or_send_email(address=form['value'], first=form['first_name'], trip=trip)
+    else:
+        camper = Camper.objects.filter(user__username=form['value'])[0]
+        trip.invited.add(camper)
+    trip.save()
+    return redirect('trip_detail', pk=trip.pk)

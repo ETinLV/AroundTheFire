@@ -17,3 +17,4 @@ class CamperCreateForm(UserCreationForm):
 class TripCreateForm(ModelForm):
     model = Trip
     fields = ('date')
+

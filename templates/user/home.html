@@ -220,34 +220,34 @@
             });
         }
 
-        google.maps.event.addListener(map, 'idle', function() {
-            checkIfMarkersStillVisible();
-        });
-        function checkIfMarkersStillVisible() {
-            coords =  map.getBounds();
-            zoom = map.getZoom();
-            coordsDict = {"n": coords.getNorthEast().lat().toString(),
-                'e': coords.getNorthEast().lng().toString(),
-                's': coords.getSouthWest().lat().toString(),
-                'w': coords.getSouthWest().lng().toString(),
-                'zoom': zoom.toString()};
-
-            $.ajax({
-                url: "{% url 'get_markers' %}",
-                dataType: "json",
-                data: coordsDict,
-                success : function(locations) {
-                    //loop thought locations and call the marker place functions
-                    all = JSON.parse(locations);
-                    for (loc in all) {
-                        placeAllMarker(loc);}
-                    },
-
-                error : function(xhr,errmsg,err) {
-                    console.log(xhr.status + ": " + xhr.responseText)
-                }
-            });
-        }
+{#        google.maps.event.addListener(map, 'idle', function() {#}
+{#            checkIfMarkersStillVisible();#}
+{#        });#}
+{#        function checkIfMarkersStillVisible() {#}
+{#            coords =  map.getBounds();#}
+{#            zoom = map.getZoom();#}
+{#            coordsDict = {"n": coords.getNorthEast().lat().toString(),#}
+{#                'e': coords.getNorthEast().lng().toString(),#}
+{#                's': coords.getSouthWest().lat().toString(),#}
+{#                'w': coords.getSouthWest().lng().toString(),#}
+{#                'zoom': zoom.toString()};#}
+{##}
+{#            $.ajax({#}
+{#                url: "{% url 'get_markers' %}",#}
+{#                dataType: "json",#}
+{#                data: coordsDict,#}
+{#                success : function(locations) {#}
+{#                    //loop thought locations and call the marker place functions#}
+{#                    all = JSON.parse(locations);#}
+{#                    for (loc in all) {#}
+{#                        placeAllMarker(loc);}#}
+{#                    },#}
+{##}
+{#                error : function(xhr,errmsg,err) {#}
+{#                    console.log(xhr.status + ": " + xhr.responseText)#}
+{#                }#}
+{#            });#}
+{#        }#}
     }
 </script>
 {% endblock %}
