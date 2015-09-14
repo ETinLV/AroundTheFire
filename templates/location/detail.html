@@ -178,6 +178,7 @@
       <div class="modal-body">
         <form method="post" action="{% url 'trip_create' location.id %}">
         {% csrf_token %}
+
         <div class="form-group"><label class="sr-only" for="id_start_date">Start date</label><input class="form-control" id="id_start_date" name="start_date" placeholder="Start date" required="required" title="" type="text" /></div>
         <div class="form-group"><label class="sr-only" for="id_end_date">End date</label><input class="form-control" id="id_end_date" name="end_date" placeholder="End date" required="required" title="" type="text" /></div>
         <div class="form-group"><label class="sr-only" for="id_title">Title</label><input class="form-control" id="id_title" maxlength="50" name="title" placeholder="Title" required="required" title="" type="text" /></div>

@@ -127,7 +127,8 @@
                '/location/upload/' + '{{ trip.pk }}' + '/',
                JSON.stringify(imgResult),
                function() { $('#results').html("DONE") }
- );
+            );
+          location.reload();
       });
 
   }, false);

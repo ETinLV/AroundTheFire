@@ -314,3 +314,30 @@ def invite(request):
         trip.invited.add(camper)
     trip.save()
     return redirect('trip_detail', pk=trip.pk)
+
+
+def user_login(request):
+    """
+    Function to login users
+    :param request:
+    :return:
+    """
+    context = RequestContext(request)
+    username = request.POST['username']
+    password = request.POST['password']
+
+    # Attempt to validate the user
+    user = authenticate(username=username, password=password)
+    # If User is valid
+    if user:
+        # Make sure user is active
+        if user.is_active:
+            # log in the user and return to the homepage
+            login(request, user)
+            return redirect('home')
+        else:
+            # An inactive account was used - no logging in!
+            return HttpResponse("Your account is disabled.")
+    else:
+        # Bad login details were provided. So we can't log the user in.
+        return HttpResponse("Sorry, we could not log you in. Please try again!")
