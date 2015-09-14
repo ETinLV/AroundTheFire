@@ -5,19 +5,11 @@
     Home
 {% endblock %}
 
-
 {% block pane-one-title %}
     Share A New Campsite
 {% endblock %}
 {% block pane-one %}
     <h4>Campsite Details</h4>
-    <form method="post" action="{% url 'location_create'  %}">
-    {% csrf_token %}
-    {% bootstrap_form form layout='inline'%}
-    <input type="submit" value="Create A Campsite" class="btn btn-success">
-    <input type="hidden" name="lat" value="{{ view.kwargs.lat }}">
-    <input type="hidden" name="lng" value="{{ view.kwargs.lng }}">
-    </form>
 {% endblock %}
 
 
@@ -37,135 +29,188 @@
     <iframe id="forecast_embed" type="text/html" frameborder="0" height="245" width="100%" src="http://forecast.io/embed/#lat={{ camper.lat }}&lon={{ camper.lng }}&name={{ camper.zip }}"> </iframe>
 {% endblock %}
 
+
+{% block modal %}
+    <div id="createModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Trip Messages</h4>
+      </div>
+      <div class="modal-body">
+          <form method="post" action="{% url 'location_create'  %}">
+            {% csrf_token %}
+            {% bootstrap_form form layout='inline'%}
+              <input type="hidden" name="lat" value="" id="formLat">
+              <input type="hidden" name="lng" value="" id="formLng">
+              <input type="submit" value="Create A Campsite" class="btn btn-success">
+          </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+
 {% block javascript %}
+
 <script>
-var iconBase = '{% static 'img/' %}';
-var icons = {
-  invited: {
-    icon: iconBase + 'purplefire.png'
-  },
-  upcoming: {
-    icon: iconBase + 'redfire.png'
-  },
-  past: {
-    icon: iconBase + 'blackfire.png'
-  },
-  home: {
-    icon: iconBase + 'home.png'
-  },
-  campsite: {
-    icon: iconBase + 'campsite.png'
-  }
-};
-var map;
-function initMap() {
-    var defautLat = Number({{ user.camper.lat }});
-    var defautLng = Number({{ user.camper.lng }});
-    var myLatLng2 = {lat: defautLat, lng: defautLng};
-    var all;
-    map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 10,
-        center: myLatLng2,
-        mapTypeId: google.maps.MapTypeId.TERRAIN
-    });
-    placeMarker();
-    //adds markers for each trip type
-    //place a marker on the center of the map
-    function placeMarker() {
-        var marker = new google.maps.Marker({
-            map: map,
-            position: {
-                lat: defautLat,
-                lng: defautLng
-            },
-            icon: icons['home'].icon
+    var iconBase = '{% static 'img/' %}';
+    var icons = {
+      invited: {
+        icon: iconBase + 'purplefire.png'
+      },
+      upcoming: {
+        icon: iconBase + 'redfire.png'
+      },
+      past: {
+        icon: iconBase + 'blackfire.png'
+      },
+      home: {
+        icon: iconBase + 'home.png'
+      },
+      campsite: {
+        icon: iconBase + 'campsite.png'
+      }
+    };
+    var map = null;
+    var marker = null;
+    function initMap() {
+        var defautLat = Number(35);
+        var defautLng = Number(-115);
+        var myLatLng = {lat: defautLat, lng: defautLng};
+        var map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 8,
+            center: myLatLng,
+            mapTypeId: google.maps.MapTypeId.TERRAIN
         });
-{#            var infowindow = new google.maps.InfoWindow({#}
-{#                content: (invited[0].fields.name.link('location/'+invited[0].pk))#}
-{##}
-{#            });#}
-{#            google.maps.event.addListener(marker, 'click', function () {#}
-{#                infowindow.open(map, marker);#}
-{#            });#}
-    }
-    function placeAllMarker(loc) {
-        var marker = new google.maps.Marker({
-            map: map,
-            position: {
-                lat: Number(all[loc].fields.lat),
-                lng: Number(all[loc].fields.lng)
-            },
-            icon: icons['campsite'].icon
-        });
-        var infowindow = new google.maps.InfoWindow({
-            content: (all[loc].fields.name.link('../location/'+all[loc].pk))
 
-        });
-        google.maps.event.addListener(marker, 'click', function () {
-            infowindow.open(map, marker);
-        });
-    }
 
-    google.maps.event.addListener(map, 'idle', function() {
-        checkIfMarkersStillVisible();
-    });
-    function checkIfMarkersStillVisible() {
-        coords =  map.getBounds();
-        zoom = map.getZoom();
-        coordsDict = {"n": coords.getNorthEast().lat().toString(),
-            'e': coords.getNorthEast().lng().toString(),
-            's': coords.getSouthWest().lat().toString(),
-            'w': coords.getSouthWest().lng().toString(),
-            'zoom': zoom.toString()};
+// code for creating new mark and info window on map click
+        var infowindownew = new google.maps.InfoWindow(
+          {
+            size: new google.maps.Size(150,50)
+          });
 
-        $.ajax({
-            url: "{% url 'get_markers' %}",
-            dataType: "json",
-            data: coordsDict,
-            success : function(locations) {
-                //loop thought locations and call the marker place functions
-                all = JSON.parse(locations);
-                for (loc in all) {
-                    placeAllMarker(loc);}
-                },
 
-            error : function(xhr,errmsg,err) {
-                console.log(xhr.status + ": " + xhr.responseText)
+        google.maps.event.addListener(map, 'click', function (event) {
+            //call function to create marker
+            if (marker) {
+                marker.setMap(null);
+                marker = null;
+            }
+            if (map.zoom < 14) {
+                map.setZoom(map.zoom + 1);
+                map.setCenter(event.latLng);
+                map.setMapTypeId(google.maps.MapTypeId.TERRAIN)
+            } else if (map.zoom < 19) {
+                map.setZoom(map.zoom + 1);
+                map.setCenter(event.latLng);
+                map.setMapTypeId(google.maps.MapTypeId.SATELLITE);
+            } else {
+                marker = zoomMarker(event.latLng, 'Create Campsite Here?');
+                $("#formLat").attr("value", event.latLng.lat());
+                $("#formLng").attr("value", event.latLng.lng());
             }
         });
-    }
-    var infowindownew = new google.maps.InfoWindow(
-      {
-        size: new google.maps.Size(150,50)
-      });
-
-
-    google.maps.event.addListener(map, 'click', function (event) {
-        //call function to create marker
-        if (marker) {
-            marker.setMap(null);
-            marker = null;
+        function zoomMarker(latlng, html) {
+            var contentString = '<button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#createModal">Create a Site Here?</button>';
+            var marker = new google.maps.Marker({
+                position: latlng,
+                map: map,
+                zIndex: Math.round(latlng.lat() * -100000) << 5
+            });
+            $("#formLat").attr("value", latlng.lat());
+            $("#formLng").attr("value", latlng.lng());
+            google.maps.event.addListener(marker, 'click', function () {
+                infowindownew.setContent(contentString);
+                infowindownew.open(map, marker);
+            });
+            google.maps.event.trigger(marker, 'click');
+            return marker;
         }
-        marker = createMarker(event.latLng, "name", "<b>Location</b><br>" + event.latLng);
-    });
-    // A function to create the marker and set up the event window function
-    function createMarker(latlng, name, html) {
-        var contentString = html.link('location/create/'+latlng);
-        var marker = new google.maps.Marker({
-            position: latlng,
-            map: map,
-            zIndex: Math.round(latlng.lat() * -100000) << 5
-        });
 
-        google.maps.event.addListener(marker, 'click', function () {
-            infowindownew.setContent(contentString);
-            infowindownew.open(map, marker);
+        // A function to create the marker and set up the event window function
+        function createMarker(latlng, text) {
+            var contentString = text.link('');
+            var marker = new google.maps.Marker({
+                position: latlng,
+                map: map,
+                zIndex: Math.round(latlng.lat() * -100000) << 5
+            });
+
+            google.maps.event.addListener(marker, 'click', function () {
+                infowindownew.setContent(contentString);
+                infowindownew.open(map, marker);
+            });
+            google.maps.event.trigger(marker, 'click');
+            return marker;
+        }
+
+        google.maps.event.addListener(map, 'idle', function() {
+        checkIfMarkersStillVisible();
         });
-        google.maps.event.trigger(marker, 'click');
-        return marker;
+        function checkIfMarkersStillVisible() {
+            coords =  map.getBounds();
+            zoom = map.getZoom();
+            coordsDict = {"n": coords.getNorthEast().lat().toString(),
+                'e': coords.getNorthEast().lng().toString(),
+                's': coords.getSouthWest().lat().toString(),
+                'w': coords.getSouthWest().lng().toString(),
+                'zoom': zoom.toString()};
+
+            $.ajax({
+                url: "{% url 'get_markers' %}",
+                dataType: "json",
+                data: coordsDict,
+                success : function(locations) {
+                    //loop thought locations and call the marker place functions
+                    all = JSON.parse(locations);
+                    for (loc in all) {
+                        placeAllMarker(loc);}
+                    },
+
+                error : function(xhr,errmsg,err) {
+                    console.log(xhr.status + ": " + xhr.responseText)
+                }
+            });
+        }
+
+        function placeAllMarker(loc) {
+            var marker = new google.maps.Marker({
+                map: map,
+                position: {
+                    lat: Number(all[loc].fields.lat),
+                    lng: Number(all[loc].fields.lng)
+                },
+                icon: icons['campsite'].icon
+            });
+            var infowindow = new google.maps.InfoWindow({
+                content: (all[loc].fields.name.link('../location/'+all[loc].pk))
+
+            });
+            google.maps.event.addListener(marker, 'click', function () {
+                infowindow.open(map, marker);
+            });
+        }
+
+        var center;
+            function calculateCenter() {
+              center = map.getCenter();
+            }
+            google.maps.event.addDomListener(map, 'idle', function() {
+              calculateCenter();
+            });
+            google.maps.event.addDomListener(window, 'resize', function() {
+              map.setCenter(center);
+            });
     }
-}
-
-
 </script>
 {% endblock %}

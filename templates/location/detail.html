@@ -238,15 +238,25 @@
                 },
                 icon: icons['campsite'].icon
             });
-                        var infowindow = new google.maps.InfoWindow({
-                            content: ('{{ location.name }}')
+            var infowindow = new google.maps.InfoWindow({
+                content: ('{{ location.name }}')
 
 
-                        });
-                        google.maps.event.addListener(marker, 'click', function () {
-                            infowindow.open(map, marker);
-                        });
+            });
+            google.maps.event.addListener(marker, 'click', function () {
+                infowindow.open(map, marker);
+            });
         }
+        var center;
+            function calculateCenter() {
+              center = map.getCenter();
+            }
+            google.maps.event.addDomListener(map, 'idle', function() {
+              calculateCenter();
+            });
+            google.maps.event.addDomListener(window, 'resize', function() {
+              map.setCenter(center);
+            });
     }
 </script>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>

@@ -128,11 +128,13 @@ class LocationCreate(CreateView):
         return super(LocationCreate, self).dispatch(*args, **kwargs)
 
     def get_success_url(self):
-        return reverse('home')
+        return reverse('location_detail', kwargs={'pk': self.object.pk})
 
     def form_valid(self, form):
-        make_address(object=form.instance, lat=form.data['lat'],
-                     lng=form.data['lng'])
+        form.is_valid()
+        data = form.data.dict()
+        make_address(object=form.instance, lat=data['lat'],
+                     lng=data['lng'])
         return super(LocationCreate, self).form_valid(form)
 
 
@@ -174,9 +176,7 @@ class TripDetail(DetailView):
         pictures to the view
         """
         context = super(TripDetail, self).get_context_data(**kwargs)
-        if datetime.datetime.now().year <= self.object.end_date.year and \
-                        datetime.datetime.now().month <= self.object.end_date.month and \
-                        datetime.datetime.now().day <= self.object.end_date.day:
+        if self.object.end_date > datetime.date.today():
             context['upcoming'] = True
         else:
             context['upcoming'] = False
