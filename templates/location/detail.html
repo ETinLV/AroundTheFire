@@ -88,7 +88,7 @@
                 }
                   console.log(JSON.stringify(imgResult));
                    $.post(
-                       '/location/upload/' + '{{ location.pk }}' + '/',
+                       '/image/upload/' + '{{ location.pk }}' + '/',
                        JSON.stringify(imgResult),
                        function() { $('#results').html("DONE") }
          );
