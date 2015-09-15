@@ -2,7 +2,7 @@ import json
 import requests
 from main.apikeys import googlekey, trailkey, weatherkey
 from main.models import Location, Photo
-
+import random
 
 def make_address(object, zip=None, lat=None, lng=None):
     """
@@ -15,13 +15,16 @@ def make_address(object, zip=None, lat=None, lng=None):
             'https://maps.googleapis.com/maps/api/geocode/json?address={zip}&components=country:US&key={googlekey}'.format(
                 zip=zip, googlekey=googlekey))
         data = json.loads(response.content.decode('utf-8'))
-        data = data['results'][0]
-        object.zip = zip
-        object.lat = data['geometry']['location']['lat']
-        object.lng = data['geometry']['location']['lng']
-        object.city = data['address_components'][1]['short_name']
-        object.save()
-        return object
+        try:
+            data = data['results'][0]
+            object.zip = zip
+            object.lat = data['geometry']['location']['lat']
+            object.lng = data['geometry']['location']['lng']
+            object.city = data['address_components'][1]['short_name']
+            object.save()
+            return object
+        except:
+            pass
     # If lat/lng given, return zip and city
     else:
         response = requests.get(
@@ -80,4 +83,8 @@ def get_weather(lat, lng):
     data = json.loads(response.content.decode('utf-8'))
     return data
 
+
+def make_locations(runs):
+    for x in range(runs):
+        api_create_locations(random.randint(29, 48), random.randint(-69, -121))
 
