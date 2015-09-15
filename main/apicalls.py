@@ -28,18 +28,21 @@ def make_address(object, zip=None, lat=None, lng=None):
             'https://maps.googleapis.com/maps/api/geocode/json?latlng={lat},{lng}&key={googlekey}'.format(
                 lat=lat, lng=lng, googlekey=googlekey))
         data = json.loads(response.content.decode('utf-8'))
-        data = data['results'][0]
-        object.city = data['address_components'][1]['short_name']
         try:
-            object.zip = data['address_components'][5]['short_name']
-            object.lat = lat
-            object.lng = lng
+            data = data['results'][0]
+            object.city = data['address_components'][1]['short_name']
+            try:
+                object.zip = data['address_components'][5]['short_name']
+                object.lat = lat
+                object.lng = lng
+            except:
+                object.zip = None
+                object.lat = lat
+                object.lng = lng
+            object.save()
+            return object
         except:
-            object.zip = None
-            object.lat = lat
-            object.lng = lng
-        object.save()
-        return object
+            pass
 
 
 def call_trail_api(lat='0', lng='0', radius=500, limit=1000):
