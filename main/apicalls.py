@@ -1,60 +1,73 @@
 import json
-import requests
-from main.apikeys import googlekey, trailkey, weatherkey
-from main.models import Location, Photo
 import random
 
+import requests
 
-def make_address(object, zip=None, lat=None, lng=None):
+from main.apikeys import googlekey, trailkey
+from main.models import Location, Photo
+
+
+def get_location_zip(location, lat=None, lng=None):
     """
-    Takes an object and either a zip code or lat/lng value and creates the other
-    data. Also saves the nearest city
+    Call the google API with a lat/lng pair to get the zipcode at that point
+    :param location: location object
+    :param lat: latitude
+    :param lng: longitude
+    :return: saved location
     """
-    # If zip code given, add lat,lng and city
-    if zip:
-        response = requests.get(
-            'https://maps.googleapis.com/maps/api/geocode/json?address={zip}&components=country:US&key={googlekey}'.format(
-                zip=zip, googlekey=googlekey))
-        data = json.loads(response.content.decode('utf-8'))
-        # A Couple of campsites in the API are not formatted correctly,
-        # Allow those to error without breaking the script
-        try:
-            data = data['results'][0]
-            object.zip = zip
-            object.lat = data['geometry']['location']['lat']
-            object.lng = data['geometry']['location']['lng']
-            object.city = data['address_components'][1]['short_name']
-            object.save()
-            return object
-        except:
-            pass
-    # If lat/lng given, return zip and city
-    else:
-        response = requests.get(
-            'https://maps.googleapis.com/maps/api/geocode/json?latlng={lat},{lng}&key={googlekey}'.format(
-                lat=lat, lng=lng, googlekey=googlekey))
-        data = json.loads(response.content.decode('utf-8'))
-        # A Couple of campsites in the API are not formatted correctly,
-        # Allow those to error without breaking the script
-        try:
-            data = data['results'][0]
-            object.city = data['address_components'][1]['short_name']
-            try:
-                object.zip = data['address_components'][5]['short_name']
-                object.lat = lat
-                object.lng = lng
-            except:
-                object.zip = None
-                object.lat = lat
-                object.lng = lng
-            object.save()
-            return object
-        except:
-            pass
+
+    # Call the API with the lat/lng pair
+    response = requests.get(
+        'https://maps.googleapis.com/maps/api/geocode/json?latlng={lat},{lng}&key={googlekey}'.format(
+            lat=lat, lng=lng, googlekey=googlekey))
+    data = json.loads(response.content.decode('utf-8'))
+    data = data['results'][0]
+
+    # Save the data
+    location.city = data['address_components'][1]['short_name']
+
+    # Rarely, google can not find a zipcode. Save these location with None.
+    try:
+        location.zip = data['address_components'][5]['short_name']
+    except:
+        location.zip = None
+    location.save()
+    return location
+
+
+def make_user_lat_lng(user, zipcode):
+    """
+    Call the googlemapsAPI with a zipcode to get the centerpoint lat/lng for that
+    zipcode
+    :param user: user object
+    :param zipcode: zipcode
+    :return: saved user
+    """
+
+    # Call the google api with a zipcode
+    response = requests.get(
+        'https://maps.googleapis.com/maps/api/geocode/json?address={zip}&components=country:US&key={googlekey}'.format(
+            zip=zipcode, googlekey=googlekey))
+    data = json.loads(response.content.decode('utf-8'))
+    data = data['results'][0]
+
+    # Save the data
+    user.lat = data['geometry']['location']['lat']
+    user.lng = data['geometry']['location']['lng']
+    user.city = data['address_components'][1]['short_name']
+    user.save()
+    return user
 
 
 def call_trail_api(lat='0', lng='0', radius=500, limit=1000):
-    """Calls the trail_api and returns campsites"""
+    """
+    Call The Trail API and Return Campsites in Radius of locaiton
+    :param lat: Latitude
+    :param lng: Longitude
+    :param radius: radius
+    :param limit: max campsites to return
+    :return: dictionary of campsites
+    """
     response = requests.get(
         "https://trailapi-trailapi.p.mashape.com/?lat={lat}&limit={limit}&lon={lng}&q[activities_activity_type_name_eq]=camping&q[country_cont]=united+states&radius={radius}".format(
             lat=lat, limit=limit, lng=lng, radius=radius),
@@ -66,43 +79,42 @@ def call_trail_api(lat='0', lng='0', radius=500, limit=1000):
     return data
 
 
-def api_create_locations(lat=None, lng=None):
-    """Adds locations from the trail api to the location database"""
-    for object in call_trail_api(lat=lat, lng=lng)['places']:
+def api_create_locations(lat=None, lng=None, radius=500, limit=1000):
+    """
+    Adds locations from the trail api to the location database
+
+    :param lat: centerpoint latitude
+    :param lng: centerpoint longitude
+    :param radius: raidus
+    :param limit: max campsites to create
+    :return: None
+    """
+    # Create location object for each item returned
+    for campsite in call_trail_api(
+            lat=lat, lng=lng, radius=radius, limit=limit)['places']:
         location, created = Location.objects.get_or_create(
-            api_id=object['unique_id'])
-        location.lat = object['lat']
-        location.lng = object['lon']
-        make_address(location, lat=location.lat, lng=location.lng)
+            api_id=campsite['unique_id'])
+        location.lat = campsite['lat']
+        location.lng = campsite['lon']
+        get_location_zip(location, lat=location.lat, lng=location.lng)
+
+        # If the location is new, add it's images to the Database
         if created:
-            for image in object['activities']:
+            for image in campsite['activities']:
                 if image['thumbnail']:
                     Photo.objects.get_or_create(thumbnail=image['thumbnail'],
                                                 url=image['thumbnail'],
                                                 location=location)
-        location.name = object['name']
+        location.name = campsite['name']
         location.save()
-
-
-def get_weather(lat, lng):
-    """
-    Returns the weather for a given location
-    :param lat:
-    :param lng:
-    :return:
-    """
-    response = requests.get(
-        "http://api.wunderground.com/api/{weatherkey}/forecast/geolookup/conditions/q/{lat},{lng}.json".format(
-            weatherkey=weatherkey, lat=lat, lng=lng))
-    data = json.loads(response.content.decode('utf-8'))
-    return data
 
 
 def make_locations(runs):
     """
-    Creates (runs) number of api calls to create locations
-    :param runs:
-    :return:
+    Creates (runs) number of api calls to create locations for random
+    centerpoints in the united states
+    :param runs: Number of API calls to make
+    :return: None
     """
     for x in range(runs):
         api_create_locations(random.randint(29, 48), random.randint(-121, -69))

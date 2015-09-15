@@ -11,7 +11,7 @@ from django.utils.decorators import method_decorator
 from django.utils.safestring import mark_safe
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View, CreateView, DetailView, UpdateView
-from main.apicalls import make_address
+from main.apicalls import make_user_lat_lng, get_location_zip
 from main.forms import CamperCreateForm
 from main.helpers import marker_set, get_or_send_email
 from main.models import Camper, Trip, Location, Review, Message, Photo, \
@@ -61,7 +61,7 @@ def create_camper(request):
             user = form.save()
             camper = Camper()
             # Send to function to add zip and city
-            make_address(camper, zip=data['zip'])
+            make_user_lat_lng(camper, zipcode=data['zip'])
             camper.user = user
             camper.save()
             try:
@@ -133,7 +133,7 @@ class LocationCreate(CreateView):
     def form_valid(self, form):
         form.is_valid()
         data = form.data.dict()
-        make_address(object=form.instance, lat=data['lat'],
+        get_location_zip(location=form.instance, lat=data['lat'],
                      lng=data['lng'])
         return super(LocationCreate, self).form_valid(form)
 
