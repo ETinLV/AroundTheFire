@@ -42,7 +42,7 @@ def make_address(object, zip=None, lat=None, lng=None):
         return object
 
 
-def call_trail_api(lat='0', lng='0', radius=180, limit=100):
+def call_trail_api(lat='0', lng='0', radius=500, limit=1000):
     """Calls the trail_api and returns campsites"""
     response = requests.get(
         "https://trailapi-trailapi.p.mashape.com/?lat={lat}&limit={limit}&lon={lng}&q[activities_activity_type_name_eq]=camping&q[country_cont]=united+states&radius={radius}".format(

@@ -11,7 +11,7 @@
     Upcoming Trips
 {% endblock %}
 {% block pane-one %}
-    <h4>Invited To <img src="{% static 'img/purplefire.png' %}" class="icon"></h4>
+    <h4>Invited <img src="{% static 'img/purplefire.png' %}" class="icon"></h4>
     {% if camper.invited.count > 0  %}
         {% for trip in camper.invited_trips %}
                 <a href="{% url 'trip_detail' trip.pk %}" class="list-group-item">

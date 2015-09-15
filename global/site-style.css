@@ -92,13 +92,6 @@ img.thumbnails{
     padding: 0 3px 35px 3px;
 }
 
-.location-city{
-    text-align: center;
-}
-
-.trip-create{
-    text-align: center;
-}
 
 @media (min-width: 992px) {}
 .col-md-3 {
@@ -107,4 +100,20 @@ img.thumbnails{
 
 .hidden{
     display: none;
+}
+
+.navbar-default {
+    background-color: #F0FAFF;
+    border-color: #000000;
+}
+
+.navbar-default .navbar-nav>li>a {
+    color: #000000;
+    font-weight: 500;
+}
+
+.navbar-default .navbar-brand {
+    color: #D11919;
+    font-family: cursive;
+    font-weight: bolder;
 }
