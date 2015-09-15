@@ -4,6 +4,7 @@ from main.apikeys import googlekey, trailkey, weatherkey
 from main.models import Location, Photo
 import random
 
+
 def make_address(object, zip=None, lat=None, lng=None):
     """
     Takes an object and either a zip code or lat/lng value and creates the other
@@ -15,6 +16,8 @@ def make_address(object, zip=None, lat=None, lng=None):
             'https://maps.googleapis.com/maps/api/geocode/json?address={zip}&components=country:US&key={googlekey}'.format(
                 zip=zip, googlekey=googlekey))
         data = json.loads(response.content.decode('utf-8'))
+        # A Couple of campsites in the API are not formatted correctly,
+        # Allow those to error without breaking the script
         try:
             data = data['results'][0]
             object.zip = zip
@@ -31,6 +34,8 @@ def make_address(object, zip=None, lat=None, lng=None):
             'https://maps.googleapis.com/maps/api/geocode/json?latlng={lat},{lng}&key={googlekey}'.format(
                 lat=lat, lng=lng, googlekey=googlekey))
         data = json.loads(response.content.decode('utf-8'))
+        # A Couple of campsites in the API are not formatted correctly,
+        # Allow those to error without breaking the script
         try:
             data = data['results'][0]
             object.city = data['address_components'][1]['short_name']
@@ -62,21 +67,30 @@ def call_trail_api(lat='0', lng='0', radius=500, limit=1000):
 
 
 def api_create_locations(lat=None, lng=None):
-    """adds locations from the trail api to the location database"""
+    """Adds locations from the trail api to the location database"""
     for object in call_trail_api(lat=lat, lng=lng)['places']:
-        location, created = Location.objects.get_or_create(api_id=object['unique_id'])
+        location, created = Location.objects.get_or_create(
+            api_id=object['unique_id'])
         location.lat = object['lat']
         location.lng = object['lon']
         make_address(location, lat=location.lat, lng=location.lng)
         if created:
             for image in object['activities']:
                 if image['thumbnail']:
-                    Photo.objects.get_or_create(thumbnail=image['thumbnail'], url=image['thumbnail'], location=location)
+                    Photo.objects.get_or_create(thumbnail=image['thumbnail'],
+                                                url=image['thumbnail'],
+                                                location=location)
         location.name = object['name']
         location.save()
 
 
 def get_weather(lat, lng):
+    """
+    Returns the weather for a given location
+    :param lat:
+    :param lng:
+    :return:
+    """
     response = requests.get(
         "http://api.wunderground.com/api/{weatherkey}/forecast/geolookup/conditions/q/{lat},{lng}.json".format(
             weatherkey=weatherkey, lat=lat, lng=lng))
@@ -85,6 +99,10 @@ def get_weather(lat, lng):
 
 
 def make_locations(runs):
+    """
+    Creates (runs) number of api calls to create locations
+    :param runs:
+    :return:
+    """
     for x in range(runs):
         api_create_locations(random.randint(29, 48), random.randint(-121, -69))
-
