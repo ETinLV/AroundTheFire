@@ -26,9 +26,9 @@ class Home(View):
         if request.user.pk is not None:
             """Gather all locations and seralize the data"""
             markers = marker_set(request)
-            invited_markers = markers[0]
-            upcoming_markers = markers[1]
-            past_markers = markers[2]
+            invited_markers = markers['invited']
+            upcoming_markers = markers['upcoming']
+            past_markers = markers['past']
             context = {'camper': request.user.camper,
                        'locations': Location.objects.select_related().all(),
                        'all_locations': serializers.serialize('json', []),

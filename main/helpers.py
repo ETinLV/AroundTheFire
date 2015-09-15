@@ -1,70 +1,70 @@
 from django.core import serializers
 from django.core.mail import send_mail
-from django.core.mail import EmailMultiAlternatives
 from main.models import Camper, UnregisteredUser
 
 
 def marker_set(request):
-    invited = set()
-    upcoming = set()
-    past = set()
-    for trip in request.user.camper.invited_trips:
-        invited.add(trip.location)
-    for trip in request.user.camper.upcoming_trips:
-        if trip.location in invited:
-            pass
-        else:
-            upcoming.add(trip.location)
-    for trip in request.user.camper.past_trips:
-        if trip.location in invited or trip.location in upcoming:
-            pass
-        else:
-            past.add(trip.location)
-    invited = serializers.serialize('json', invited,
-                                    fields=(
-                                        'lat', 'lng', 'name', 'city',
-                                        'zip', 'pk',))
-    upcoming = serializers.serialize('json', upcoming,
-                                     fields=(
-                                         'lat', 'lng', 'name', 'city',
-                                         'zip', 'pk',))
-    past = serializers.serialize('json', past,
+    """
+    Make a dict of trip locations based on status
+
+    Add each location once based up the hierarchy of its status. Return a
+    dictionary with status as key and set of locations as values
+    """
+    # Create invited set
+    invited = set(trip.location for trip in request.user.camper.invited_trips)
+
+    # Create upcoming set, ignoring locations in the invited set
+    upcoming = set(
+        trip.location for trip in request.user.camper.upcoming_trips if
+        trip.location not in invited)
+
+    # Create past set, ignoring locations in the invited and upcoming set
+    past = set(trip.location for trip in request.user.camper.past_trips if
+               trip.location not in invited and trip.location not in upcoming)
+    locations = {
+        'invited': location_list_seralizer(invited),
+        'upcoming': location_list_seralizer(upcoming),
+        'past': location_list_seralizer(past),
+    }
+    return locations
+
+
+def location_list_seralizer(location_list):
+    """JSON seralize a list of locations"""
+
+    data = serializers.serialize('json', location_list,
                                  fields=(
                                      'lat', 'lng', 'name', 'city',
                                      'zip', 'pk',))
-    return (invited, upcoming, past)
+    return data
 
 
 def get_or_send_email(address, trip, first=None):
+    """
+    Find a user object or create an unregistered user and send an email
+    """
+    
     try:
         camper = Camper.objects.filter(user__email=address)[0]
         trip.invited.add(camper)
         invite_email(address, name=first, trip=trip)
         return trip
-    except:
-        unregistered_user = \
-            UnregisteredUser.objects.get_or_create(email=address,
-                                                   first_name=first)[
-                0]
+    except Camper.DoesNotExist:
+        unregistered_user, created = UnregisteredUser.objects.get_or_create(
+            email=address,
+            first_name=first)
         trip.unregistered_user.add(unregistered_user)
         invite_email(address, name=first, trip=trip)
     return trip
 
 
 def invite_email(address, name, trip):
-    body="Hello {name}, You Have Been invited on a trip at Around The Fire. aroundthefire.herokuapps.com/trip/{trip}".format(name=name, trip=trip.pk),
-    send_mail("You've been invited on a trip at Around The Fire", body,
-      "Around The Fire <ericturnernv@gmail.com>", [address])
+    """SendGrid Email Function"""
+
+    subject = "You've been invited on a trip at Around The Fire"
+    body = "Hello {name}, You Have Been invited on a trip at Around The Fire by {owner}. aroundthefire.herokuapps.com/trip/{trip}".format(
+        name=name, owner=trip.owner, trip=trip.pk),
+    from_address = "Around The Fire <ericturnernv@gmail.com>"
+    send_mail(subject, body,
+              from_address, [address])
     return
-    # or
-    # mail = EmailMultiAlternatives(
-    #     subject="You've Been invited on a trip at Around The Fire",
-    #     body="hello {name}, You Have Been invited on a trip at Around The Fire. Go to aroundthefire.herokuapps.com/trip/{trip} to see what you're missing".format(
-    #         name=name, trip=trip.pk),
-    #     from_email="Around The Fire <ericturnernv@gmail.com>",
-    #     to=[address],
-    #     headers={"Reply-To": "support@sendgrid.com"}
-    # )
-    # mail.attach_alternative("<p>This is a simple HTML email body</p>",
-    #                         "text/html")
-    # mail.send()

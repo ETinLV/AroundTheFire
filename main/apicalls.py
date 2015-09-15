@@ -10,6 +10,7 @@ from main.models import Location, Photo
 def get_location_zip(location, lat=None, lng=None):
     """
     Call the google API with a lat/lng pair to get the zipcode at that point
+
     :param location: location object
     :param lat: latitude
     :param lng: longitude
@@ -37,8 +38,8 @@ def get_location_zip(location, lat=None, lng=None):
 
 def make_user_lat_lng(user, zipcode):
     """
-    Call the googlemapsAPI with a zipcode to get the centerpoint lat/lng for that
-    zipcode
+    Call the google API with a zipcode to get the centerpoint lat/lng
+
     :param user: user object
     :param zipcode: zipcode
     :return: saved user
@@ -60,14 +61,8 @@ def make_user_lat_lng(user, zipcode):
 
 
 def call_trail_api(lat='0', lng='0', radius=500, limit=1000):
-    """
-    Call The Trail API and Return Campsites in Radius of locaiton
-    :param lat: Latitude
-    :param lng: Longitude
-    :param radius: radius
-    :param limit: max campsites to return
-    :return: dictionary of campsites
-    """
+    """Call The Trail API and Return Campsites in Radius of location"""
+
     response = requests.get(
         "https://trailapi-trailapi.p.mashape.com/?lat={lat}&limit={limit}&lon={lng}&q[activities_activity_type_name_eq]=camping&q[country_cont]=united+states&radius={radius}".format(
             lat=lat, limit=limit, lng=lng, radius=radius),
@@ -81,7 +76,7 @@ def call_trail_api(lat='0', lng='0', radius=500, limit=1000):
 
 def api_create_locations(lat=None, lng=None, radius=500, limit=1000):
     """
-    Adds locations from the trail api to the location database
+    Add locations from the trail api to the location database
 
     :param lat: centerpoint latitude
     :param lng: centerpoint longitude
@@ -89,6 +84,7 @@ def api_create_locations(lat=None, lng=None, radius=500, limit=1000):
     :param limit: max campsites to create
     :return: None
     """
+
     # Create location object for each item returned
     for campsite in call_trail_api(
             lat=lat, lng=lng, radius=radius, limit=limit)['places']:
@@ -110,11 +106,7 @@ def api_create_locations(lat=None, lng=None, radius=500, limit=1000):
 
 
 def make_locations(runs):
-    """
-    Creates (runs) number of api calls to create locations for random
-    centerpoints in the united states
-    :param runs: Number of API calls to make
-    :return: None
-    """
+    """Create (runs) number of api calls to create locations"""
+
     for x in range(runs):
         api_create_locations(random.randint(29, 48), random.randint(-121, -69))

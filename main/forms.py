@@ -6,9 +6,8 @@ from main.models import Trip
 
 
 class CamperCreateForm(UserCreationForm):
-    """
-    Form for registering New Campers
-    """
+    """Form for registering New Campers"""
+
     zip = forms.CharField(max_length=10, required=True)
     email = forms.EmailField(required=True)
 
@@ -18,8 +17,7 @@ class CamperCreateForm(UserCreationForm):
 
 
 class TripCreateForm(ModelForm):
-    """
-    Form for creating a new trip
-    """
+    """Form for creating a new trip"""
+
     model = Trip
     fields = ('date',)
