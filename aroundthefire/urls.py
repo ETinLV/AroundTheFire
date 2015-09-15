@@ -2,13 +2,14 @@ from django.conf.urls import include, url
 from django.contrib import admin
 from django.views.generic import TemplateView
 import main
-from main.views import TripCreate, Home, TripDetail, LocationDetail, \
-    LocationCreate, AcceptDecline, ReviewCreate, MessageCreate, AllLocations
+from main.views import TripCreate, Index, TripDetail, LocationDetail, \
+    LocationCreate, AcceptDecline, ReviewCreate, MessageCreate, AllLocations, \
+    UserHome
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     # Default Url
-    url(r'^$', Home.as_view(), name="home"),
+    url(r'^$', Index.as_view(), name="home"),
 
     # Admin Urls
     url(r'^logout', auth_views.logout, {'next_page': '/'}, name='logout'),
@@ -17,6 +18,8 @@ urlpatterns = [
 
     # User Urls
     url(r'^user/register', main.views.create_camper, name='register'),
+    url(r'^user/home', UserHome.as_view(), name='user_home'),
+
 
     # Trip Urls
     url(r'^trip/accept_decline/(?P<pk>[0-9]+)/$', AcceptDecline.as_view(),

@@ -3,7 +3,7 @@ from django.core.mail import send_mail
 from main.models import Camper, UnregisteredUser
 
 
-def marker_set(request):
+def trip_marker_set(request):
     """
     Make a dict of trip locations based on status
 
@@ -43,7 +43,7 @@ def get_or_send_email(address, trip, first=None):
     """
     Find a user object or create an unregistered user and send an email
     """
-    
+
     try:
         camper = Camper.objects.filter(user__email=address)[0]
         trip.invited.add(camper)
@@ -62,7 +62,8 @@ def invite_email(address, name, trip):
     """SendGrid Email Function"""
 
     subject = "You've been invited on a trip at Around The Fire"
-    body = "Hello {name}, You Have Been invited on a trip at Around The Fire by {owner}. aroundthefire.herokuapps.com/trip/{trip}".format(
+    body = "Hello {name}, You Have Been invited on a trip at Around The Fire " \
+           "by {owner}. aroundthefire.herokuapps.com/trip/{trip}".format(
         name=name, owner=trip.owner, trip=trip.pk),
     from_address = "Around The Fire <ericturnernv@gmail.com>"
     send_mail(subject, body,

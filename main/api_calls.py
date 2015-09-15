@@ -3,7 +3,7 @@ import random
 
 import requests
 
-from main.apikeys import googlekey, trailkey
+from main.api_keys import googlekey, trailkey
 from main.models import Location, Photo
 
 
