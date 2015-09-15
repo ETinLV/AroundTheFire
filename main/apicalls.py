@@ -86,5 +86,5 @@ def get_weather(lat, lng):
 
 def make_locations(runs):
     for x in range(runs):
-        api_create_locations(random.randint(29, 48), random.randint(-69, -121))
+        api_create_locations(random.randint(29, 48), random.randint(-121, -69))
 
