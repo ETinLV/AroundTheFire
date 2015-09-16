@@ -26,6 +26,8 @@ urlpatterns = [
         name="accept_decline"),
     url(r'^trip/create/(?P<pk>[0-9]+)/$', TripCreate.as_view(),
         name="trip_create"),
+    url(r'^trip/create/$', TripCreate.as_view(),
+        name="trip_new"),
     url(r'^trip/(?P<pk>[0-9]+)/$', TripDetail.as_view(), name="trip_detail"),
     url(r'^trip/message/(?P<pk>[0-9]+)/$', MessageCreate.as_view(),
         name="message_create"),

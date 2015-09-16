@@ -49,7 +49,7 @@ def get_or_send_email(address, trip, first=None):
         trip.invited.add(camper)
         invite_email(address, name=first, trip=trip)
         return trip
-    except Camper.DoesNotExist:
+    except IndexError:
         unregistered_user, created = UnregisteredUser.objects.get_or_create(
             email=address,
             first_name=first)

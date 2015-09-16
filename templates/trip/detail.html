@@ -67,6 +67,9 @@
         {% for person in trip.invited.all %}
             {{ person.user.first_name }}({{ person.user.username }})
         {% endfor %}
+        {% for person in trip.unregistered_user.all %}
+            {{ person.first_name }}
+        {% endfor %}
         </p>
     Attending:
         <p>

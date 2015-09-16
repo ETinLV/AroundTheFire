@@ -91,7 +91,8 @@
                        '/image/upload/' + '{{ location.pk }}' + '/',
                        JSON.stringify(imgResult),
                        function() { $('#results').html("DONE") }
-         );
+                    );
+                    location.reload()
               });
 
           }, false);
@@ -107,7 +108,7 @@
 {% block pane-two %}
 
      {% if location.reviews.all %}
-        <h4>Most Recent Reviews</h4>
+        <h4>Most Recent Review</h4>
         <h5>{{ location.reviews.all.0.owner }} @ {{ location.reviews.all.0.created_at }}</h5>
         <p>{{ location.reviews.all.0.content }}</p>
         <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#myModal">See All Reviews</button>

@@ -206,6 +206,7 @@ class TripCreate(CreateView):
     model = Trip
     fields = (
         'start_date', 'end_date', 'title', 'description', 'max_capacity',)
+    template_name = 'trip/create.html'
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
@@ -213,11 +214,10 @@ class TripCreate(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(TripCreate, self).get_context_data(**kwargs)
-        context['location'] = Location.objects.get(pk=self.kwargs['pk'])
         return context
 
     def get_success_url(self):
-        return reverse('home')
+        return reverse('trip_detail', kwargs={'pk': self.object.pk})
 
     def form_valid(self, form):
         """Make the owner of the trip the user who created it"""
@@ -340,7 +340,7 @@ def image_upload(request, pk):
         return HttpResponse(status=204)
 
 
-@method_decorator(login_required)
+
 def invite(request):
     """ Add user to the invited list
 
