@@ -1,5 +1,6 @@
 import datetime
 import json
+
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
@@ -10,12 +11,14 @@ from django.template import RequestContext
 from django.utils.decorators import method_decorator
 from django.utils.safestring import mark_safe
 from django.views.decorators.csrf import csrf_exempt
+
 from django.views.generic import View, CreateView, DetailView, UpdateView
+
 from main.api_calls import make_user_lat_lng, get_location_zip
 from main.forms import CamperCreateForm
-from main.helpers import trip_marker_set, get_or_send_email
-from main.models import Camper, Trip, Location, Review, Message, Photo, \
-    UnregisteredUser
+from main.helpers import trip_marker_set, get_or_send_email, \
+    convert_unregistered_user
+from main.models import Camper, Trip, Location, Review, Message, Photo
 
 
 class Index(View):
@@ -26,8 +29,6 @@ class Index(View):
 
         # if not logged in, send to default page
         else:
-            self.all_locations = serializers.serialize('json',
-                                                       Location.objects.all())
             context = {'photos': Photo.objects.all()[:19],
                        'reviews': Review.objects.all()[:9]
                        }
@@ -119,10 +120,7 @@ class LocationDetail(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(LocationDetail, self).get_context_data(**kwargs)
-        try:
-            context['photos'] = self.object.photos.all()
-        except:
-            context['photos'] = None
+        context['photos'] = self.object.photos.all()
         return context
 
 
@@ -149,7 +147,7 @@ class LocationCreate(CreateView):
 
 
 class ReviewCreate(CreateView):
-    """View to Create Review"""
+    """View to Create a Review"""
 
     model = Review
     fields = ('content',)
@@ -202,7 +200,7 @@ class TripDetail(DetailView):
 
 
 class TripCreate(CreateView):
-    "Trip Create View"
+    """Trip Create View"""
 
     model = Trip
     fields = (
@@ -229,6 +227,7 @@ class TripCreate(CreateView):
 
 
 class AcceptDecline(UpdateView):
+    """Update the trip if a Camper accepts or declines and invite"""
     model = Trip
     fields = ['invited', 'attending', 'declined']
 
@@ -240,12 +239,15 @@ class AcceptDecline(UpdateView):
         return reverse('home')
 
     def form_valid(self, form):
+        # Determine if the user has accepted or declined
         trip = Trip.objects.get(pk=form.data['trip'])
         if form.data['action'] == 'attending':
+            # If accepted, add to the attending and remove from invited
             camper = Camper.objects.get(pk=form.data['attending'])
             trip.attending.add(camper)
             trip.invited.remove(camper)
         else:
+            # If declined, add to declined and removed from invited
             camper = Camper.objects.get(pk=form.data['declined'])
             trip.declined.add(camper)
             trip.invited.remove(camper)
@@ -254,6 +256,7 @@ class AcceptDecline(UpdateView):
 
 
 class MessageCreate(CreateView):
+    """Create a message"""
     model = Message
     fields = ('content',)
 
@@ -270,7 +273,8 @@ class MessageCreate(CreateView):
         return reverse(viewname='trip_detail', kwargs={'pk': self.kwargs['pk']})
 
     def form_valid(self, form):
-        """Make the owner of the trip the user who created it"""
+        """Make the owner of the message the user who created it
+        and add the trip it is related to"""
         if form.is_valid():
             message = form.instance
             message.content = form.cleaned_data['content']
@@ -281,8 +285,12 @@ class MessageCreate(CreateView):
 
 
 def get_markers(request):
+    """Return markers in a map bounds box."""
+
     query_string = request.GET.dict()
+    # Only Return objects if the zoomed in far enough
     if int(query_string['zoom']) >= 7:
+        # Find all locations withen the bound box
         locations = Location.objects.filter(
             lat__lte=float(query_string['n']),
             lat__gte=float(query_string['s']),
@@ -296,10 +304,18 @@ def get_markers(request):
 
 @csrf_exempt
 def image_upload(request, pk):
+    """ Add a photo object to the database
+
+    Accepts a JSON dict with the photo object and the trip or location the image
+    relates to. Creates the photo object.
+    """
+
     data = json.loads(request.body.decode('utf8'))
+    # Check if something was uploaded
     if data['sites']:
         if data['type'] == 'location':
             location = Location.objects.get(pk=pk)
+            # Create each photo object
             for picture in data['sites']:
                 photo = Photo.objects.create(
                     location=location,
@@ -309,6 +325,7 @@ def image_upload(request, pk):
             return HttpResponse(status=201)
         if data['type'] == 'trip':
             trip = Trip.objects.get(pk=pk)
+            # Create each photo object
             for picture in data['sites']:
                 photo = Photo.objects.create(
                     trip=trip,
@@ -324,6 +341,14 @@ def image_upload(request, pk):
 
 @method_decorator(login_required)
 def invite(request):
+    """ Add user to the invited list
+
+    Accept an email or username, if email, determine if that email is
+    registered, if not update/create an UnregisteredUser object, if so add that
+    user to the invited list. If username is given, add that user to the
+    invited user list
+    """
+
     form = request.POST
     form = form.dict()
     trip = Trip.objects.get(pk=form['trip'])
@@ -341,6 +366,7 @@ def user_login(request):
     """
     Log users in or send to error page
     """
+
     username = request.POST['username']
     password = request.POST['password']
 
@@ -359,15 +385,3 @@ def user_login(request):
     else:
         # Bad login details were provided. So we can't log the user in.
         return HttpResponse("Sorry, we could not log you in. Please try again!")
-
-
-def convert_unregistered_user(data, camper):
-    try:
-        unregistered_user = UnregisteredUser.objects.get(
-            email=data['email'])
-        for trip in unregistered_user.invited.all():
-            trip.invited.add(camper)
-            trip.save()
-        unregistered_user.delete()
-    except UnregisteredUser.DoesNotExist:
-        pass

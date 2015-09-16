@@ -22,15 +22,15 @@ def trip_marker_set(request):
     past = set(trip.location for trip in request.user.camper.past_trips if
                trip.location not in invited and trip.location not in upcoming)
     locations = {
-        'invited': location_list_seralizer(invited),
-        'upcoming': location_list_seralizer(upcoming),
-        'past': location_list_seralizer(past),
+        'invited': location_list_serializer(invited),
+        'upcoming': location_list_serializer(upcoming),
+        'past': location_list_serializer(past),
     }
     return locations
 
 
-def location_list_seralizer(location_list):
-    """JSON seralize a list of locations"""
+def location_list_serializer(location_list):
+    """JSON serialize a list of locations"""
 
     data = serializers.serialize('json', location_list,
                                  fields=(
@@ -64,8 +64,23 @@ def invite_email(address, name, trip):
     subject = "You've been invited on a trip at Around The Fire"
     body = "Hello {name}, You Have Been invited on a trip at Around The Fire " \
            "by {owner}. aroundthefire.herokuapps.com/trip/{trip}".format(
-        name=name, owner=trip.owner, trip=trip.pk),
+            name=name, owner=trip.owner, trip=trip.pk),
     from_address = "Around The Fire <ericturnernv@gmail.com>"
     send_mail(subject, body,
               from_address, [address])
     return
+
+
+def convert_unregistered_user(data, camper):
+    """ Check if new user was previously an unregistered user"""
+    try:
+        # If the user was unregistered, add the registered user
+        # to the invited list of the trips they were previously invited on
+        unregistered_user = UnregisteredUser.objects.get(
+            email=data['email'])
+        for trip in unregistered_user.invited.all():
+            trip.invited.add(camper)
+            trip.save()
+        unregistered_user.delete()
+    except UnregisteredUser.DoesNotExist:
+        pass

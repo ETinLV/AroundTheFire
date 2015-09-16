@@ -176,7 +176,7 @@
                 icon: icons['invited'].icon
             });
             var infowindow = new google.maps.InfoWindow({
-                content: (invited[loc].fields.name.link('location/'+invited[loc].pk))
+                content: (invited[loc].fields.name.link('../location/'+invited[loc].pk))
 
             });
             google.maps.event.addListener(marker, 'click', function () {
@@ -194,7 +194,7 @@
                 icon: icons['upcoming'].icon
             });
             var infowindow = new google.maps.InfoWindow({
-                content: (upcoming[loc].fields.name.link('location/'+upcoming[loc].pk))
+                content: (upcoming[loc].fields.name.link('../location/'+upcoming[loc].pk))
 
             });
             google.maps.event.addListener(marker, 'click', function () {
@@ -212,7 +212,7 @@
                 icon: icons['past'].icon
             });
             var infowindow = new google.maps.InfoWindow({
-                content: (past[loc].fields.name.link('location/'+past[loc].pk))
+                content: (past[loc].fields.name.link('../location/'+past[loc].pk))
 
             });
             google.maps.event.addListener(marker, 'click', function () {
