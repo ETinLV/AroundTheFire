@@ -10,6 +10,7 @@ from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
 from django.utils.decorators import method_decorator
 from django.utils.safestring import mark_safe
+
 from django.views.decorators.csrf import csrf_exempt
 
 from django.views.generic import View, CreateView, DetailView, UpdateView
@@ -59,7 +60,7 @@ class UserHome(View):
                                   context_instance=RequestContext(request))
 
 
-@method_decorator(login_required)
+
 def create_camper(request):
     """Accept POST data and register a camper"""
 
