@@ -26,6 +26,8 @@ def get_location_zip(location, lat=None, lng=None):
 
     # Save the data
     location.city = data['address_components'][1]['short_name']
+    location.lat = lat
+    location.lng = lng
 
     # Rarely, google can not find a zipcode. Save these location with None.
     try:

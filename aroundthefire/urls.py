@@ -24,8 +24,8 @@ urlpatterns = [
     # Trip Urls
     url(r'^trip/accept_decline/(?P<pk>[0-9]+)/$', AcceptDecline.as_view(),
         name="accept_decline"),
-    url(r'^trip/create/(?P<pk>[0-9]+)/$', TripCreate.as_view(),
-        name="trip_create"),
+    # url(r'^trip/create/(?P<pk>[0-9]+)/$', TripCreate.as_view(),
+    #     name="trip_create"),
     url(r'^trip/create/$', TripCreate.as_view(),
         name="trip_new"),
     url(r'^trip/(?P<pk>[0-9]+)/$', TripDetail.as_view(), name="trip_detail"),

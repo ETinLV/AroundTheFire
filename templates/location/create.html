@@ -193,7 +193,7 @@ you will be able to create a new site.</h5>
                 icon: icons['campsite'].icon
             });
             var infowindow = new google.maps.InfoWindow({
-                content: (all[loc].fields.name.link('../location/'+all[loc].pk))
+                content: (all[loc].fields.name.link('../../location/'+all[loc].pk))
 
             });
             google.maps.event.addListener(marker, 'click', function () {

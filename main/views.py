@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
-from django.shortcuts import render_to_response, redirect
+from django.shortcuts import render_to_response, redirect, render
 from django.template import RequestContext
 from django.utils.decorators import method_decorator
 from django.utils.safestring import mark_safe
@@ -130,8 +130,7 @@ class LocationCreate(CreateView):
 
     model = Location
     fields = ('name',)
-    template_name = "location/create.html"
-
+    template_name = 'location/create.html'
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super(LocationCreate, self).dispatch(*args, **kwargs)
@@ -205,7 +204,7 @@ class TripCreate(CreateView):
 
     model = Trip
     fields = (
-        'start_date', 'end_date', 'title', 'description', 'max_capacity',)
+        'start_date', 'end_date', 'title', 'description', 'max_capacity', "location")
     template_name = 'trip/create.html'
 
     @method_decorator(login_required)
@@ -221,9 +220,8 @@ class TripCreate(CreateView):
 
     def form_valid(self, form):
         """Make the owner of the trip the user who created it"""
-
         form.instance.owner = self.request.user.camper
-        form.instance.location = Location.objects.get(pk=self.kwargs['pk'])
+        form.instance.location = form.cleaned_data['location']
         return super(TripCreate, self).form_valid(form)
 
 
