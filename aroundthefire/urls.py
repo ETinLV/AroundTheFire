@@ -1,6 +1,5 @@
 from django.conf.urls import include, url
 from django.contrib import admin
-from django.views.generic import TemplateView
 import main
 from main.views import TripCreate, Index, TripDetail, LocationDetail, \
     LocationCreate, AcceptDecline, ReviewCreate, MessageCreate, AllLocations, \
@@ -20,12 +19,9 @@ urlpatterns = [
     url(r'^user/register', main.views.create_camper, name='register'),
     url(r'^user/home', UserHome.as_view(), name='user_home'),
 
-
     # Trip Urls
     url(r'^trip/accept_decline/(?P<pk>[0-9]+)/$', AcceptDecline.as_view(),
         name="accept_decline"),
-    # url(r'^trip/create/(?P<pk>[0-9]+)/$', TripCreate.as_view(),
-    #     name="trip_create"),
     url(r'^trip/create/$', TripCreate.as_view(),
         name="trip_new"),
     url(r'^trip/(?P<pk>[0-9]+)/$', TripDetail.as_view(), name="trip_detail"),

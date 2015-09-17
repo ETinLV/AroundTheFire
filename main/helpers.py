@@ -31,18 +31,17 @@ def trip_marker_set(request):
 
 def location_list_serializer(location_list):
     """JSON serialize a list of locations"""
-
-    data = serializers.serialize('json', location_list,
-                                 fields=(
-                                     'lat', 'lng', 'name', 'city',
-                                     'zip', 'pk',))
-    return data
-
+    if location_list is not None:
+        data = serializers.serialize('json', location_list,
+                                     fields=(
+                                         'lat', 'lng', 'name', 'city',
+                                         'zip', 'pk',))
+        return data
+    else:
+        return None
 
 def get_or_send_email(address, trip, first=None):
-    """
-    Find a user object or create an unregistered user and send an email
-    """
+    """Find a user object or create an unregistered user and send an email"""
 
     try:
         camper = Camper.objects.filter(user__email=address)[0]

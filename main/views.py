@@ -6,9 +6,12 @@ from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
-from django.shortcuts import render_to_response, redirect, render
+from django.shortcuts import render_to_response, redirect
+
 from django.template import RequestContext
+
 from django.utils.decorators import method_decorator
+
 from django.utils.safestring import mark_safe
 
 from django.views.decorators.csrf import csrf_exempt
@@ -58,7 +61,6 @@ class UserHome(View):
         return render_to_response(template_name='user/home.html',
                                   context=context,
                                   context_instance=RequestContext(request))
-
 
 
 def create_camper(request):
@@ -131,6 +133,7 @@ class LocationCreate(CreateView):
     model = Location
     fields = ('name',)
     template_name = 'location/create.html'
+
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super(LocationCreate, self).dispatch(*args, **kwargs)
@@ -204,7 +207,8 @@ class TripCreate(CreateView):
 
     model = Trip
     fields = (
-        'start_date', 'end_date', 'title', 'description', 'max_capacity', "location")
+        'start_date', 'end_date', 'title', 'description', 'max_capacity',
+        "location")
     template_name = 'trip/create.html'
 
     @method_decorator(login_required)
@@ -289,7 +293,7 @@ def get_markers(request):
     query_string = request.GET.dict()
     # Only Return objects if the zoomed in far enough
     if int(query_string['zoom']) >= 7:
-        # Find all locations withen the bound box
+        # Find all locations within the bound box
         locations = Location.objects.filter(
             lat__lte=float(query_string['n']),
             lat__gte=float(query_string['s']),
@@ -336,7 +340,6 @@ def image_upload(request, pk):
             return HttpResponse(status=400)
     else:
         return HttpResponse(status=204)
-
 
 
 def invite(request):

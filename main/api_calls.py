@@ -10,11 +10,6 @@ from main.models import Location, Photo
 def get_location_zip(location, lat=None, lng=None):
     """
     Call the google API with a lat/lng pair to get the zipcode at that point
-
-    :param location: location object
-    :param lat: latitude
-    :param lng: longitude
-    :return: saved location
     """
 
     # Call the API with the lat/lng pair
@@ -41,10 +36,6 @@ def get_location_zip(location, lat=None, lng=None):
 def make_user_lat_lng(user, zipcode):
     """
     Call the google API with a zipcode to get the centerpoint lat/lng
-
-    :param user: user object
-    :param zipcode: zipcode
-    :return: saved user
     """
 
     # Call the google api with a zipcode
@@ -79,12 +70,6 @@ def call_trail_api(lat='0', lng='0', radius=500, limit=1000):
 def api_create_locations(lat=None, lng=None, radius=500, limit=1000):
     """
     Add locations from the trail api to the location database
-
-    :param lat: centerpoint latitude
-    :param lng: centerpoint longitude
-    :param radius: raidus
-    :param limit: max campsites to create
-    :return: None
     """
 
     # Create location object for each item returned
