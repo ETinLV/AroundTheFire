@@ -99,6 +99,7 @@
     {% elif upcoming and user.camper in trip.attending.all or user.camper == trip.owner%}
         <p>You are Attending This Trip</p>
     {% endif %}
+    <hr>
     {% if photos %}
         <div id="photogrid">
             {% for photo in photos %}
