@@ -18,7 +18,7 @@
                 <p>{{ trip.title }}</p>
                 <p>{{ trip.location.name }}</p>
                 <p>{{ trip.start_date }} - {{ trip.end_date }}</p>
-
+                <p>Created By: {{ trip.owner }}</p>
 {#                TODO: remove the inlne style tags!#}
                 <form method="post" action="{% url 'accept_decline' trip.pk %}" style="float: left; padding-right: 10px">
                 {% csrf_token %}
@@ -46,9 +46,9 @@
     {% if camper.upcoming_trips  %}
         {% for trip in camper.upcoming_trips %}
             <a href="{% url 'trip_detail' trip.pk %}" class="list-group-item">
-            <p>What: {{ trip.title }}</p>
-            <p>Where: {{ trip.location.name }}</p>
-            <p>When: {{ trip.start_date }} - {{ trip.end_date }}</p>
+            <p>{{ trip.title }}</p>
+            <p>{{ trip.location.name }}</p>
+            <p>{{ trip.start_date }} - {{ trip.end_date }}</p>
             <p>Created By: {{ trip.owner }}</p>
             {% if trip.attending.all %}
             <p>Attending: {% for person in trip.attending.all %}

@@ -91,7 +91,7 @@
         <input type="hidden" name="action" value="declined">
         <input type="hidden" name="trip" value="{{ trip.pk }}">
         <input type="hidden" name="declined" value="{{ camper.pk }}">
-        <input type="submit" value="Can't Make It" class="btn btn-xs btn-success">
+        <input type="submit" value="Can't Make It" class="btn btn-xs btn-danger">
         </form>
 
     {% elif upcoming and trip.attending.count >= trip.max_capacity and user.camper in trip.invited.all %}
@@ -109,7 +109,7 @@
         </div>
 
     {% else %}
-        <p>There Are No Photos For This Location</p>
+        <p>There Are No Photos For This Trip</p>
     {% endif %}
     <P><a class="btn btn-info btn-sm" href="#" id="upload_widget_opener">Upload A Photo</a></p>
 {#<a href="#" id="upload_widget_opener">Upload multiple images</a>#}
@@ -207,20 +207,21 @@ Trip Messages
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Trip Messages</h4>
+        <h4 class="modal-title">Invite Your Friends</h4>
       </div>
       <div class="modal-body">
-
+        <h3>Invite By E-mail</h3>
         <form method="post" action="{% url 'invite' %}">
             {% csrf_token %}
             <input type="hidden" name='type' value="email">
             <input type="hidden" name='trip' value="{{ trip.pk }}">
-            Enter an Email Address: If your friend isn't registered yet, we'll send them an email letting them know!
+            Enter an e-mail address - If your friend isn't registered yet, we'll send them an email letting them know!
             <div class="form-group"><label class="sr-only" for="id_first_name">First Name</label><input class="form-control" id="id_first_name" maxlength="30" name="first_name" placeholder="First Name" required="required" title="" type="text" /></div>
             <div class="form-group"><label class="sr-only" for="id_email">email</label><input class="form-control" id="id_email" maxlength="254" name="value" placeholder="Email" required="required" title="" type="email" /></div>
            <input type="submit" value="Invite By Email" class="btn btn-success">
         </form>
-
+        <hr>
+          <h3>Invite By Username</h3>
         <form method="post" action="{% url 'invite' %}">
             {% csrf_token %}
             <input type="hidden" name='type' value="username">
