@@ -88,7 +88,7 @@
         {% csrf_token %}
         <input type="hidden" name="action" value="attending">
         <input type="hidden" name="trip" value="{{ trip.pk }}">
-        <input type="hidden" name="attending" value="{{ camper.pk }}">
+        <input type="hidden" name="attending" value="{{ user.camper.pk }}">
         <input type="submit" value="I'm Going" class="btn btn-xs btn-success">
         </form>
 
@@ -96,7 +96,7 @@
         {% csrf_token %}
         <input type="hidden" name="action" value="declined">
         <input type="hidden" name="trip" value="{{ trip.pk }}">
-        <input type="hidden" name="declined" value="{{ camper.pk }}">
+        <input type="hidden" name="declined" value="{{ user.camper.pk }}">
         <input type="submit" value="Can't Make It" class="btn btn-xs btn-danger">
         </form>
 
