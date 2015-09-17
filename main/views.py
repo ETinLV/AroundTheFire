@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
-from django.shortcuts import render_to_response, redirect
+from django.shortcuts import render_to_response, redirect, render
 
 from django.template import RequestContext
 
@@ -36,9 +36,7 @@ class Index(View):
             context = {'photos': Photo.objects.all()[:19],
                        'reviews': Review.objects.all()[:9]
                        }
-            return render_to_response(template_name='default.html',
-                                      context=context,
-                                      context_instance=RequestContext(request))
+            return render(request, 'default.html', context=context,)
 
 
 class UserHome(View):
@@ -58,9 +56,7 @@ class UserHome(View):
                    'upcoming_locations': mark_safe(upcoming_markers),
                    'past_locations': mark_safe(past_markers),
                    }
-        return render_to_response(template_name='user/home.html',
-                                  context=context,
-                                  context_instance=RequestContext(request))
+        return render(request, 'user/home.html', context)
 
 
 def create_camper(request):

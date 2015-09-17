@@ -12,55 +12,67 @@
 
 {% endblock %}
 {% block pane-one %}
-    <h4>Invited To <img src="{% static 'img/purplefire.png' %}" class="icon"></h4>
-    {% if camper.invited.count > 0  %}
+    <h4>Invited To <img src="{% static 'img/purplefire.png' %}" class="icon">
+    </h4>
+    {% if camper.invited.count > 0 %}
         {% for trip in camper.invited_trips %}
-                <a href="{% url 'trip_detail' trip.pk %}" class="list-group-item">
+            <a href="{% url 'trip_detail' trip.pk %}" class="list-group-item">
                 <p>{{ trip.title }}</p>
+
                 <p>{{ trip.location.name }}</p>
+
                 <p>{{ trip.start_date }} - {{ trip.end_date }}</p>
 
 
-                <form method="post" action="{% url 'accept_decline' trip.pk %}" style="float: left; padding-right: 10px">
-                {% csrf_token %}
-                <input type="hidden" name="action" value="attending">
-                <input type="hidden" name="trip" value="{{ trip.pk }}">
-                <input type="hidden" name="attending" value="{{ camper.pk }}">
-                <input type="submit" value="I'm Going" class="btn btn-xs btn-success">
+                <form method="post" action="{% url 'accept_decline' trip.pk %}"
+                      style="float: left; padding-right: 10px">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="attending">
+                    <input type="hidden" name="trip" value="{{ trip.pk }}">
+                    <input type="hidden" name="attending"
+                           value="{{ camper.pk }}">
+                    <input type="submit" value="I'm Going"
+                           class="btn btn-xs btn-success">
                 </form>
 
-                <form method="post" action="{% url 'accept_decline' trip.pk %}" style="clear: right">
-                {% csrf_token %}
-                <input type="hidden" name="action" value="declined">
-                <input type="hidden" name="trip" value="{{ trip.pk }}">
-                <input type="hidden" name="declined" value="{{ camper.pk }}">
-                <input type="submit" value="Can't Make It" class="btn btn-xs btn-danger">
+                <form method="post" action="{% url 'accept_decline' trip.pk %}"
+                      style="clear: right">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="declined">
+                    <input type="hidden" name="trip" value="{{ trip.pk }}">
+                    <input type="hidden" name="declined"
+                           value="{{ camper.pk }}">
+                    <input type="submit" value="Can't Make It"
+                           class="btn btn-xs btn-danger">
                 </form>
 
             </a>
         {% endfor %}
     {% else %}
-                <p>You Currently Aren't invited On Any Trips</p>
+        <p>You Currently Aren't invited On Any Trips</p>
     {% endif %}
 
-    <h4>Upcoming  <img src="{% static 'img/redfire.png' %}" class="icon"></h4>
-    {% if camper.upcoming_trips  %}
+    <h4>Upcoming <img src="{% static 'img/redfire.png' %}" class="icon"></h4>
+    {% if camper.upcoming_trips %}
         {% for trip in camper.upcoming_trips %}
             <a href="{% url 'trip_detail' trip.pk %}" class="list-group-item">
-            <p>What: {{ trip.title }}</p>
-            <p>Where: {{ trip.location.name }}</p>
-            <p>When: {{ trip.start_date }} - {{ trip.end_date }}</p>
-            <p>Created By: {{ trip.owner }}</p>
-            {% if trip.attending.all %}
-            <p>Attending: {% for person in trip.attending.all %}
-                {{ person.user.username }}</p>
-                {% endfor %}
-            {% else %}
-                <p>No One has accept yet</p>
-            {% endif %}
+                <p>What: {{ trip.title }}</p>
+
+                <p>Where: {{ trip.location.name }}</p>
+
+                <p>When: {{ trip.start_date }} - {{ trip.end_date }}</p>
+
+                <p>Created By: {{ trip.owner }}</p>
+                {% if trip.attending.all %}
+                    <p>Attending: {% for person in trip.attending.all %}
+                        {{ person.user.username }}</p>
+                    {% endfor %}
+                {% else %}
+                    <p>No One has accept yet</p>
+                {% endif %}
             </a>
         {% endfor %}
-    {% else%}
+    {% else %}
 
         <p>You Have No Upcoming Trips!</p>
     {% endif %}
@@ -71,19 +83,23 @@
 {% endblock %}
 
 {% block pane-two %}
-    {% if camper.past_trips  %}
+    {% if camper.past_trips %}
         {% for trip in camper.past_trips %}
             <a href="{% url 'trip_detail' trip.pk %}" class="list-group-item">
-            <p>{{ trip.title }}</p>
-            <p>{{ trip.location.name }}</p>
-            <p>{{ trip.start_date }} - {{ trip.end_date }}</p>
-            <p>{{ trip.owner }}</p>
-            <p>{% for person in trip.attending.all %}
-                {{ person.username }}</p>
+                <p>{{ trip.title }}</p>
+
+                <p>{{ trip.location.name }}</p>
+
+                <p>{{ trip.start_date }} - {{ trip.end_date }}</p>
+
+                <p>{{ trip.owner }}</p>
+
+                <p>{% for person in trip.attending.all %}
+                    {{ person.username }}</p>
                 {% endfor %}
             </a>
-            {% endfor %}
-    {% else%}
+        {% endfor %}
+    {% else %}
         <p>You Haven't Been On Any Trips Yet!</p>
     {% endif %}
 {% endblock %}
@@ -93,127 +109,135 @@
 {% endblock %}
 
 {% block pane-three %}
-    <iframe id="forecast_embed" type="text/html" frameborder="0" height="245" width="100%" src="http://forecast.io/embed/#lat={{ camper.lat }}&lon={{ camper.lng }}&name={{ camper.zip }}"> </iframe>
+    <iframe id="forecast_embed" type="text/html" frameborder="0" height="245"
+            width="100%"
+            src="http://forecast.io/embed/#lat={{ camper.lat }}&lon={{ camper.lng }}&name={{ camper.zip }}"></iframe>
 {% endblock %}
 
 {% block javascript %}
-<script>
-var iconBase = '{% static 'img/' %}';
-var icons = {
-  invited: {
-    icon: iconBase + 'purplefire.png'
-  },
-  upcoming: {
-    icon: iconBase + 'redfire.png'
-  },
-  past: {
-    icon: iconBase + 'blackfire.png'
-  },
-  home: {
-    icon: iconBase + 'home.png'
-  },
-  campsite: {
-    icon: iconBase + 'campsite.png'
-  }
-};
-var map;
-function initMap() {
-    var defautLat = Number({{ user.camper.lat }});
-    var defautLng = Number({{ user.camper.lng }});
-    var myLatLng2 = {lat: defautLat, lng: defautLng};
-    var all;
-    map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 10,
-        center: myLatLng2,
-        mapTypeId: google.maps.MapTypeId.TERRAIN
-    });
-    placeMarker();
-    //adds markers for each trip type
-    //place a marker on the center of the map
-    function placeMarker() {
-        var marker = new google.maps.Marker({
-            map: map,
-            position: {
-                lat: defautLat,
-                lng: defautLng
+    <script>
+        var iconBase = '{% static 'img/' %}';
+        var icons = {
+            invited: {
+                icon: iconBase + 'purplefire.png'
             },
-            icon: icons['home'].icon
-        });
-{#            var infowindow = new google.maps.InfoWindow({#}
-{#                content: (invited[0].fields.name.link('location/'+invited[0].pk))#}
-{##}
-{#            });#}
-{#            google.maps.event.addListener(marker, 'click', function () {#}
-{#                infowindow.open(map, marker);#}
-{#            });#}
-    }
-    function placeAllMarker(loc) {
-        var marker = new google.maps.Marker({
-            map: map,
-            position: {
-                lat: Number(all[loc].fields.lat),
-                lng: Number(all[loc].fields.lng)
+            upcoming: {
+                icon: iconBase + 'redfire.png'
             },
-            icon: icons['campsite'].icon
-        });
-        var infowindow = new google.maps.InfoWindow({
-            content: (all[loc].fields.name.link('../location/'+all[loc].pk))
-
-        });
-        google.maps.event.addListener(marker, 'click', function () {
-            infowindow.open(map, marker);
-        });
-    }
-
-    google.maps.event.addListener(map, 'idle', function() {
-        checkIfMarkersStillVisible();
-    });
-    function checkIfMarkersStillVisible() {
-        coords =  map.getBounds();
-        zoom = map.getZoom();
-        coordsDict = {"n": coords.getNorthEast().lat().toString(),
-            'e': coords.getNorthEast().lng().toString(),
-            's': coords.getSouthWest().lat().toString(),
-            'w': coords.getSouthWest().lng().toString(),
-            'zoom': zoom.toString()};
-
-        $.ajax({
-            url: "{% url 'get_markers' %}",
-            dataType: "json",
-            data: coordsDict,
-            success : function(locations) {
-                //loop thought locations and call the marker place functions
-                all = JSON.parse(locations);
-                for (loc in all) {
-                    placeAllMarker(loc);}
-                },
-
-            error : function(xhr,errmsg,err) {
-                console.log(xhr.status + ": " + xhr.responseText)
+            past: {
+                icon: iconBase + 'blackfire.png'
+            },
+            home: {
+                icon: iconBase + 'home.png'
+            },
+            campsite: {
+                icon: iconBase + 'campsite.png'
             }
-        });
-    }
+        };
+        var map;
+        function initMap() {
+            var defautLat = Number({{ user.camper.lat }});
+            var defautLng = Number({{ user.camper.lng }});
+            var myLatLng2 = {lat: defautLat, lng: defautLng};
+            var all;
+            map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 10,
+                center: myLatLng2,
+                mapTypeId: google.maps.MapTypeId.TERRAIN
+            });
+            placeMarker();
+            //adds markers for each trip type
+            //place a marker on the center of the map
+            function placeMarker() {
+                var marker = new google.maps.Marker({
+                    map: map,
+                    position: {
+                        lat: defautLat,
+                        lng: defautLng
+                    },
+                    icon: icons['home'].icon
+                });
+                {#            var infowindow = new google.maps.InfoWindow({#}
+                {#                content: (invited[0].fields.name.link('location/'+invited[0].pk))#}
+                {##}
+                {#            });#}
+                {#            google.maps.event.addListener(marker, 'click', function () {#}
+                {#                infowindow.open(map, marker);#}
+                {#            });#}
+            }
 
-    var center;
-        function calculateCenter() {
-          center = map.getCenter();
+            function placeAllMarker(loc) {
+                var marker = new google.maps.Marker({
+                    map: map,
+                    position: {
+                        lat: Number(all[loc].fields.lat),
+                        lng: Number(all[loc].fields.lng)
+                    },
+                    icon: icons['campsite'].icon
+                });
+                var infowindow = new google.maps.InfoWindow({
+                    content: (all[loc].fields.name.link('../location/' + all[loc].pk))
+
+                });
+                google.maps.event.addListener(marker, 'click', function () {
+                    infowindow.open(map, marker);
+                });
+            }
+
+            google.maps.event.addListener(map, 'idle', function () {
+                checkIfMarkersStillVisible();
+            });
+            function checkIfMarkersStillVisible() {
+                coords = map.getBounds();
+                zoom = map.getZoom();
+                coordsDict = {
+                    "n": coords.getNorthEast().lat().toString(),
+                    'e': coords.getNorthEast().lng().toString(),
+                    's': coords.getSouthWest().lat().toString(),
+                    'w': coords.getSouthWest().lng().toString(),
+                    'zoom': zoom.toString()
+                };
+
+                $.ajax({
+                    url: "{% url 'get_markers' %}",
+                    dataType: "json",
+                    data: coordsDict,
+                    success: function (locations) {
+                        //loop thought locations and call the marker place functions
+                        all = JSON.parse(locations);
+                        for (loc in all) {
+                            placeAllMarker(loc);
+                        }
+                    },
+
+                    error: function (xhr, errmsg, err) {
+                        console.log(xhr.status + ": " + xhr.responseText)
+                    }
+                });
+            }
+
+            var center;
+
+            function calculateCenter() {
+                center = map.getCenter();
+            }
+
+            google.maps.event.addDomListener(map, 'idle', function () {
+                calculateCenter();
+            });
+            google.maps.event.addDomListener(window, 'resize', function () {
+                map.setCenter(center);
+            });
         }
-        google.maps.event.addDomListener(map, 'idle', function() {
-          calculateCenter();
-        });
-        google.maps.event.addDomListener(window, 'resize', function() {
-          map.setCenter(center);
-        });
-}
 
-    $(function () {
-     $('#pane-one').removeClass('hidden');
-     });
-    $(function () {
-         $('#pane-two').removeClass('hidden');
-     });
-    $(function () {
-         $('#pane-three').removeClass('hidden');
-     });
-</script>
+        $(function () {
+            $('#pane-one').removeClass('hidden');
+        });
+        $(function () {
+            $('#pane-two').removeClass('hidden');
+        });
+        $(function () {
+            $('#pane-three').removeClass('hidden');
+        });
+    </script>
 {% endblock %}

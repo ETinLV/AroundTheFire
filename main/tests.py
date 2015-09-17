@@ -4,6 +4,7 @@ from django.core.urlresolvers import reverse
 from django.test import TestCase, Client
 from main.helpers import convert_unregistered_user
 from main.models import Camper, Trip, UnregisteredUser
+from django.core.management import call_command
 
 
 class ConvertUnregisteredUserMethodTests(TestCase):
@@ -70,20 +71,13 @@ class IndexViewTests(TestCase):
         self.assertEqual(response.status_code, 302)
 
 class UserHomeViewTests(TestCase):
-    def setUp(self):
-        self.current_user = User.objects.create_user(username='currentuser', email='currentuser@test.com', password='test')
-        self.current_camper = Camper.objects.create(user=self.current_user)
-
-        self.new_user = User.objects.create(username='newuser', email='new_user@test.com', password='test')
-        self.new_camper = Camper.objects.create(user=self.new_user)
-
-        self.unregistered_user = UnregisteredUser.objects.create(email='new_user@test.com')
-
-        self.trip = Trip.objects.create(end_date=(datetime.date.today() + datetime.timedelta(days=1)), owner=self.current_camper)
-        self.trip.unregistered_user.add(self.unregistered_user)
-        self.trip.save()
+    fixtures = ['test_fixtures.json',]
 
     def test_index_logged_in(self):
-        self.client.login(username='currentuser', password='test')
+        user = User.objects.get(username='test')
+        self.client.login(username='test', password='test')
         response = self.client.get(reverse('user_home'))
-        self.assertIn(response.context['camper'], self.current_user)
+        self.assertEqual(user.camper, response.context['camper'])
+
+
+
